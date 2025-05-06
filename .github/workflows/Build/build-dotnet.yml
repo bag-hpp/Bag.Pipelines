@@ -1,0 +1,85 @@
+name: Build Code and Publish Artifacts
+
+on:
+  workflow_call:
+    inputs:
+      gh_runner:
+        required: true
+        type: string
+        default: 'ubuntu-latest'
+      dotnet_version:
+        description: ".NET SDK version (if runtime is dotnet)"
+        required: true
+        type: string
+      solution_file:
+        description: "solution file"
+        required: true
+        type: string    
+      unit_tests_available:
+        description : "unit_tests_available"   
+        required: false
+        type: string    
+        default: true     
+      unit_tests_available:
+        description : "unit_tests_available"   
+        required: false
+        type: string    
+        default: true                 
+    outputs:
+      gh_runner:
+        value: ${{ inputs.gh_runner }}
+      dotnet_version:
+        value: ${{ inputs.dotnet_version }}
+      solution_file:
+        value: ${{ inputs.solution_file }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      dotnet_version: ${{ inputs.dotnet_version }}
+      solution_file: ${{ inputs.solution_file }}
+      gh_runner: ${{ inputs.gh_runner }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ inputs.dotnet_version }}
+
+      - name: .NET Restore
+        run: dotnet restore ${{ inputs.solution_file }}
+
+      - name: .NET Build
+        run: dotnet build ${{ inputs.solution_file }} --no-restore --configuration Release
+
+      - name: .NET Test
+        if: ${{ inputs.unit_tests_available }}
+        run: |
+          for test_project in $(find . -name '*Tests.csproj'); do
+          echo "Running tests for $test_project"
+          dotnet test "$test_project" --no-build --configuration Release --verbosity normal
+          done
+
+      - name: .NET Publish
+        if: ${{ inputs.integration_tests_available }}
+        run: |
+          for project in $(find . -name '*.csproj' -not -name '*Tests.csproj'); do
+          echo "Publishing $project"
+          dotnet publish "$project" --configuration Release --output ./publish
+          done
+
+      - name: Upload .NET Publish Output as artifact (if runtime is dotnet)
+        uses: actions/upload-artifact@v4
+        with:
+           name: dotnet-app
+           path: ./publish     
+        
+    
+
+     

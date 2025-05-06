@@ -1,0 +1,50 @@
+name: Feature Pipeline dotnet
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  actions: read
+  packages: write
+  id-token: write
+  security-events: write
+
+jobs:
+  pipeline-feature-dotnet:
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/CICD/cicd-dotnet.yml@main
+    with:
+      gh_runner: 'ubuntu-latest'
+      runtime: 'dotnet'
+      solution_file: ''
+      dotnet_version: '8.0.x'
+      reg_name: 'bagcrmgmacrcorchn0'
+      app_name: 'edi-bag-cr/ncds/be'
+      resource_group: 'bag-rg-cr-dev-chn-0'
+      containerAppName: 'bag-ca-cr-ncds-dev-chn-0'
+      changelog_file: 'CHANGELOG.md'
+      files_pattern: "src/main/**"
+      ignored_files: "src/test/** docs/**"
+      report_format: 'HTML'
+      release_Features: ''
+      bugfixes: ''
+      release_refactoring: ''
+      sonar_available: false
+      sonar_project_name: ''
+      owasp_available: false
+      owasp_scan_path: 'src'       
+      publish_changelog_available: false
+      changed_files_available: false
+      publish_docker_available: false
+      deploy_with_github_available: false
+      release_available: false
+      static_code_analysis_available: false
+      codeql_available: false
+    secrets:
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
+      GH_PAT: ${{ secrets.PAT_TOKEN }}

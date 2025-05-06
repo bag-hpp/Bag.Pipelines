@@ -1,0 +1,69 @@
+name: Build Code and Publish Artifacts
+
+on:
+  workflow_call:
+    inputs:
+      runtime:
+      java_version:
+        description: 'Java version to use'
+        required: false
+        type: string
+      distribution:
+        description: "JDK Distribution (e.g., temurin, zulu, corretto, graalvm, oracle)"
+        required: false
+        type: string                                
+    outputs:
+      java_version:
+        value: ${{ inputs.java_version }}
+      distribution:
+        value: ${{ inputs.distribution }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      java_version: ${{ inputs.java_version }}
+      distribution: ${{ inputs.distribution }}
+      resource_group: ${{ inputs.resource_group }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ inputs.java_version }}
+          distribution: ${{ inputs.distribution }}
+          cache: 'maven'
+          server-id: github
+
+      - name: Set up Maven settings
+        run: |
+          mkdir -p ~/.m2
+          echo "<settings>
+            <servers>
+              <server>
+                <id>github</id>
+                <username>${{ github.actor }}</username>
+                <password>${{ secrets.GITHUB_TOKEN }}</password>
+              </server>
+            </servers>
+          </settings>" > ~/.m2/settings.xml     
+
+      - name: Print current version
+        run: mvn help:evaluate -Dexpression=project.version -q -DforceStdout    
+
+      - name: Build and Deploy with Maven
+        run: mvn --batch-mode clean deploy    
+
+      - name: Upload Java Jar as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-jar
+          path: ./target/*.jar   
+    
+
+     

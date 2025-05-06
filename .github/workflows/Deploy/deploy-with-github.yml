@@ -1,0 +1,47 @@
+name: Deploy Docker Image from Github actions
+ 
+on:
+  workflow_call:
+     inputs:
+       gh_runner:
+         required: false
+         type:  string
+         default: "ubuntu-latest"  
+       reg_name:
+          required: true
+          type: string
+       imageToDeploy:
+         required: true
+         type: string
+       resource_group:
+         required: true
+         type: string      
+       containerAppName:  
+         required: true
+         type: string      
+     secrets:
+       AZURE_CREDENTIALS:
+         required: true
+ 
+jobs:
+   deploy-with-github:
+     runs-on: ${{ inputs.gh_runner }}
+     steps:
+       - name: Checkout Code
+         uses: actions/checkout@v2 
+ 
+       - name: Log in to Azure
+         uses: azure/login@v2
+         with:
+           creds: ${{ secrets.AZURE_CREDENTIALS }}
+ 
+       - name: Login to ACR
+         run: |
+           az acr login -n ${{ inputs.reg_name }}
+ 
+       - name: Deploy container app with github
+         uses: azure/container-apps-deploy-action@v1
+         with:
+           containerAppName: ${{ inputs.containerAppName }}
+           imageToDeploy: ${{ inputs.imageToDeploy }}
+           resourceGroup: ${{ inputs.resource_group }}   

@@ -1,0 +1,44 @@
+name: Publish Changelog
+
+on:
+  workflow_call:
+    inputs:
+      gh_runner:
+        required: false
+        type: string
+        default: "ubuntu-latest"   
+      changelog_file:
+        description: "Path to Changelog File"
+        required: true
+        type: string      
+
+jobs:
+  changelog:
+    runs-on: ${{ inputs.gh_runner }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: if Changelog not existed
+        run: |
+          if [ ! -f "${{ inputs.changelog_file }}" ]; then
+            echo "CHANGELOG not found. It will be created..."
+            echo "# Changelog" > ${{ inputs.changelog_file }}
+            echo "$(date +'%Y-%m-%d') - Initialise of Changelogs" >> ${{ inputs.changelog_file }}
+          fi
+
+      - name: Write the latest commits to changelog
+        run: |
+          echo "$(date +'%Y-%m-%d') - Latest changes:" >> ${{ inputs.changelog_file }}
+          git log --pretty=format:"- %s (%an)" -n 5 >> ${{ inputs.changelog_file }}
+
+      - name: Show Changelog
+        run: cat ${{ inputs.changelog_file }}
+
+      - name: Commit and push to github
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add ${{ inputs.changelog_file }}
+          git commit -m "Update Changelog via GitHub Actions" || echo "No changes to commit"
+          git push || echo "No push needed"

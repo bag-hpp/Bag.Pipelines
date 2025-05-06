@@ -1,0 +1,63 @@
+name: changed-files
+
+on:
+  workflow_call:
+    inputs:
+      gh_runner:
+        required: false
+        type: string
+        default: ubuntu-latest
+      files_pattern:
+        required: false
+        type: string
+        default: |
+          **/*.java
+          **/*.yml
+          **/*.properties
+          **/*.xml    
+      ignored_files:
+        required: false
+        type: string
+        default: |
+          src/test/**
+          docs/**
+
+jobs:
+  changed_files:
+    runs-on: ${{ inputs.gh_runner }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v45
+        with:
+          files: ${{ inputs.files_pattern }}
+          base_sha: ${{ github.event.pull_request.base.sha }}
+          since_last_remote_commit: true
+
+      - name: Debugging - List all changed files
+        run: |
+          echo "Changed files:"
+          echo "${{ steps.changed-files.outputs.all_changed_files }}"
+
+      - name: Save changed files to list
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+        run: |
+          echo "${ALL_CHANGED_FILES}" > files-paths
+
+      - name: Remove ignored files
+        if: inputs.ignored_files != ''
+        run: |
+          grep -Ev "$(echo "${{ inputs.ignored_files }}" | sed 's/ /|/g')" files-paths > files-paths-filtered || true
+          mv files-paths-filtered files-paths
+
+      - name: Upload changed files artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: files-paths-${{ github.run_number }}
+          path: ./files-paths

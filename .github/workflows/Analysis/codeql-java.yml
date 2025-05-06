@@ -1,0 +1,64 @@
+name: "CodeQL Advanced Java"
+
+on:
+  workflow_call:
+    inputs:
+      java_version:
+        description: "Java version to use"
+        required: false
+        type: string
+        default: "22"
+      distribution:
+        description: "Java distribution to use"
+        required: false
+        type: string
+        default: "temurin"   
+      gh_runner:
+        required: false
+        type:     string
+        default:  "ubuntu-latest"       
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ${{ inputs.gh_runner }}
+
+    permissions:
+      security-events: write
+      packages: read
+      actions: read
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: java-kotlin
+            build-mode: manual
+          - language: javascript-typescript
+            build-mode: none
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: ${{ matrix.language }}
+        build-mode: ${{ matrix.build-mode }}
+        queries: +security-extended,security-and-quality
+
+    - name: Setup JDK
+      uses: actions/setup-java@v3
+      with:
+        distribution: ${{ inputs.distribution }}
+        java-version: ${{ inputs.java_version }}
+
+    - name: Build Java/Kotlin project
+      run: mvn clean install -DskipTests
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+      with:
+        category: "/language:${{ matrix.language }}"

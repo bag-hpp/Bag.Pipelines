@@ -1,0 +1,44 @@
+name: OWASP Dependency-Check
+
+on:
+  workflow_call:
+    inputs:
+      gh_runner:
+        required: false
+        type:     string
+        default:  "ubuntu-latest"  
+      project_path:
+        required: false
+        type: string
+        default: "."
+      report_format:
+        required: false
+        type: string
+        default: "HTML"   
+        
+jobs:
+  owasp-scan:
+    runs-on: ${{ inputs.gh_runner }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install OWASP Dependency-Check
+        run: |
+          wget https://github.com/jeremylong/DependencyCheck/releases/download/v8.4.0/dependency-check-8.4.0-release.zip -O dependency-check.zip
+          unzip dependency-check.zip
+          mv dependency-check /opt/owasp-dependency-check
+
+      - name: Run OWASP Dependency-Check
+        run: |
+          /opt/owasp-dependency-check/bin/dependency-check.sh \
+          --project "${{ github.repository }}" \
+          --scan ${{ inputs.project_path }} \
+          --format ${{ inputs.report_format }} \
+          --out dependency-check-report
+
+      - name: Upload Report as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: OWASP-Dependency-Check-Report
+          path: dependency-check-report/

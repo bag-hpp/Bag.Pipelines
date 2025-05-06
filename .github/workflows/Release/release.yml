@@ -1,0 +1,44 @@
+name: Create Release
+
+on:
+  workflow_call:
+    inputs:
+      release_Features:
+        description: "release Features"
+        required: false
+        type: string      
+      bugfixes:
+        description: "release Features"
+        required: false
+        type: string      
+      release_refactoring:
+        description: "release Refactoring"
+        required: false
+        type: string      
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Bump version and create tag
+        id: bump
+        run: |
+          VERSION=$(date +'%Y.%m.%d.%H%M')
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git tag -a "v$VERSION" -m "Release v$VERSION"
+          git push origin "v$VERSION"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ env.VERSION }}
+          name: Release v${{ env.VERSION }}
+          body: |
+            - 🆕 New Features: ${{ inputs.release_Features }}
+            - 🐛 Bugfixes: ${{ inputs.Bugfixes }}
+            - 🔧 Internal Refactoring: ${{ inputs.release_refactoring }}
