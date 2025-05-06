@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   pipeline-feature-java:
-    uses: bag-hpp/Bag.Pipelines/.github/workflows/CICD/cicd-java.yml@main
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/cicd-java.yml@main
     with:
       gh_runner: 'ubuntu-latest'
       runtime: 'java'

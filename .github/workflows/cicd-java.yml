@@ -1,4 +1,4 @@
-name: Reusable CI/CD Pipeline dotnet
+name: Reusable CI/CD Pipeline Java
 
 on:
   workflow_call:
@@ -6,34 +6,42 @@ on:
       gh_runner:
         required: true
         type: string
-        default: 'ubuntu-latest'  
+        default: 'ubuntu-latest'   
       runtime:
         required: false
         type: string
-        default: 'dotnet'
-      solution_file:
+        default: 'java'
+      distribution:
         required: true
         type: string
-      dotnet_version: 
+        default: 'temurin'
+      java_version:
         required: true
         type: string
-        default: "8.0.x"
+        default: '22'
       reg_name:
         required: true
         type: string
       app_name:
         required: true
         type: string
-      resource_group:
-        required: true
-        type: string
       containerAppName: 
         required: true
         type: string 
+      environment:
+        required: false
+        type: string
       changelog_file:
         required: true
         type: string
         default: 'CHANGELOG.md'
+      resource_group:
+        required: true
+        type: string
+      sonar_available:
+        required: true
+        type: boolean
+        default: true
       files_pattern:
         required: true
         type: string
@@ -41,11 +49,14 @@ on:
       ignored_files:
         required: true
         type: string
-        default: "src/test/** docs/**".gitignore'
+        default: 'node_modules/** .gitignore'
       report_format:
         required: true
         type: string
-        default: 'HTML' 
+        default: 'HTML'   
+      working_directory:
+        required: true
+        type: string    
       release_Features:
         description: "release Features"
         required: false
@@ -57,16 +68,11 @@ on:
       release_refactoring:
         description: "release Refactoring"
         required: false
-        type: string      
-      sonar_available:
+        type: string    
+      static_code_analysis_available:
+        description: "static code analyse available"
         required: false
-        type: boolean
-        default: false
-      sonar_project_name:
-        description: "sonar project name"
-        required: false
-        type: string
-        default: true
+        type: string    
       owasp_scan_available: 
         description: 'owasp scan available'
         required: false
@@ -77,6 +83,11 @@ on:
         required: false
         type: string
         default: 'src'   
+      codeql_available: 
+        description: 'codeql available'
+        required: false
+        type: string
+        default: false  
       publish_changelog_available:
         description: 'publish changelog available'
         required: false
@@ -97,14 +108,6 @@ on:
         required: true
         type: boolean
         default: false
-      static_code_analysis_available:
-        description: "static code analyse available"
-        required: false
-        type: string    
-      codeql_available:
-        description: "codeql available"
-        required: false
-        type: string   
       docker_build_scan_and_push_available: 
         description: 'docker build scan and push available'
         required: false
@@ -114,24 +117,29 @@ on:
         description: 'deploy with github available'
         required: false
         type: boolean
-        default: false 
+        default: false
         
     secrets:
       AZURE_CREDENTIALS:
         required: true
+      SONAR_TOKEN:
+        required: false
+      SONAR_HOST_URL:
+        required: false
       GH_PAT:
         required: true   
       SONAR_PROJECT_KEY:   
-        required: true         
+        required: true    
 
 jobs:
   build:
-    uses: bag-hpp/Bag.Pipelines/Build/.github/workflows/build-dotnet.yml@main
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/build-java.yml@main
     with:
-      dotnet_version: ${{ inputs.dotnet_version }} 
-      solution_file: ${{ inputs.solution_file }} 
+      java_version: ${{ inputs.java_version }}
+      distribution: ${{ inputs.distribution }}
       reg_name: ${{ inputs.reg_name }}
       app_name: ${{ inputs.app_name }}
+      environment: ${{ inputs.environment }}
       changelog_file: ${{ inputs.changelog_file }}
       resource_group: ${{ inputs.resource_group }}
       sonar_available: ${{ inputs.sonar_available }}
@@ -142,27 +150,47 @@ jobs:
 
   static-code-analysis:
     if: ${{ inputs.static_code_analysis_available }}
-    uses: bag-hpp/Bag.Pipelines/Analysis/.github/workflows/static-code-analysis.yml@main
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/static-code-analysis.yml@main
     with:
       runtime: ${{ inputs.runtime }}
-      dotnet_version: ${{ inputs.dotnet_version }}
+      java_version: ${{ inputs.java_version }}
+      distribution: ${{ inputs.distribution }}  
       sonar_project_name: ${{ inputs.sonar_project_name }}  
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
       SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} 
-      SONAR_PROJECT_KEY:  ${{ secrets.SONAR_PROJECT_KEY }}
-  
-  owasp-scan:    
+      SONAR_PROJECT_KEY:  ${{ secrets.SONAR_PROJECT_KEY }} 
+
+  owasp-scan:
     if: ${{ inputs.owasp_scan_available }}
     needs: build
-    uses: bag-hpp/Bag.Pipelines/Analysis/.github/workflows/owasp.yml@main    
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/owasp.yml@main    
     with:
       project_path: ${{ inputs.owasp_scan_path }}
-      report_format: ${{ inputs.report_format }}
+      report_format: ${{ inputs.report_format }} 
+
+  codeql:
+    needs: build
+    if: ${{ inputs.codeql_available }}
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/codeql-java.yml@main    
+    with:
+      java_version: ${{ inputs.java_version }}
+      distribution: ${{ inputs.distribution }}
+
+  build-scan-and-push-docker:
+    if: ${{ inputs.docker_build_scan_and_push_available }}
+    needs: [build, codeql, owasp-scan, static-code-analysis]
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/docker-build-and-push.yml@main
+    with:
+      registry: ${{ inputs.reg_name }}
+      app_name: ${{ inputs.app_name }}
+      runtime: ${{ inputs.runtime }}
+    secrets:
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}             
 
   trigger-deploy-github:
+    needs: build-scan-and-push-docker
     if: ${{ inputs.deploy_with_github_available }}
-    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Trigger deploy-containerapp workflow
@@ -177,39 +205,28 @@ jobs:
                "app_name": "${{ inputs.app_name }}",
                "resource_group": "${{ inputs.resource_group }}",               
                "containerAppName": "${{ inputs.containerAppName }}"
-            }         
-
-  build-scan-and-push-docker:
-    if: ${{ inputs.docker_build_scan_and_push_available }}
-    needs: [trigger-deploy-github]
-    uses: bag-hpp/Bag.Pipelines/Deploy/.github/workflows/docker-build-and-push.yml@main
-    with:
-      registry: ${{ inputs.reg_name }}
-      app_name: ${{ inputs.app_name }}
-      runtime: ${{ inputs.runtime }}
-    secrets:
-      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}            
+            }                  
 
   release:
     if: ${{ inputs.release_available  }}
     needs: trigger-deploy-github
-    uses: bag-hpp/Bag.Pipelines/Release/.github/workflows/release.yml@main
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/release.yml@main
     with:
       release_Features: ${{ inputs.release_Features }}
       bugfixes: ${{ inputs.bugfixes }}
-      release_refactoring: ${{ inputs.release_refactoring }}    
+      release_refactoring: ${{ inputs.release_refactoring }}   
 
   publish-changelog:
     if: ${{ inputs.publish_changelog_available }}
     needs: trigger-deploy-github
-    uses: bag-hpp/Bag.Pipelines/Release/.github/workflows/changelog.yml@main
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/changelog.yml@main
     with:
       changelog_file: ${{ inputs.changelog_file }}
 
   changed-files:
     if: ${{ inputs.changed_files_available }}
     needs: trigger-deploy-github
-    uses: bag-hpp/Bag.Pipelines/Release/.github/workflows/changed-files.yaml@main
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/changed-files.yaml@main
     with:
       files_pattern: ${{ inputs.files_pattern }}
-      ignored_files: ${{ inputs.ignored_files }}   
+      ignored_files: ${{ inputs.ignored_files }}      

@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   pipeline-feature-angular:
-    uses: bag-hpp/Bag.Pipelines/.github/workflows/CICD/cicd-angular.yml@main
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/cicd-angular.yml@main
     with:
       gh_runner: 'ubuntu-latest'
       runtime: 'angular'
