@@ -107,12 +107,12 @@ on:
         required: false
         type: boolean   
         default: false
-      docker_build_scan_and_push_available: 
+      build_docker_available: 
         description: 'docker build scan and push available'
         required: false
         type: boolean
         default: false
-      deploy_with_github_available:
+      deploy_github_available:
         description: 'deploy with github available'
         required: false
         type: boolean
@@ -167,8 +167,8 @@ jobs:
       java_version: ${{ inputs.java_version }}
       distribution: ${{ inputs.distribution }}
 
-  build-scan-and-push-docker:
-    if: ${{ inputs.docker_build_scan_and_push_available }}
+  build-docker:
+    if: ${{ inputs.build_docker_available }}
     needs: [build]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/docker-build-and-push.yml@main
     with:
@@ -178,9 +178,9 @@ jobs:
     secrets:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}   
 
-  trigger-deploy-github:
-    if: ${{ deploy_with_github_available }}
-    needs: [build-scan-and-push-docker]
+  deploy-github:
+    if: ${{ deploy_github_available }}
+    needs: [build-docker]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/deploy-with-github.yml@main
     with:
       registry: ${{ inputs.reg_name }}
@@ -192,7 +192,7 @@ jobs:
 
   release:
     if: ${{ inputs.release_available  }}
-    needs: [trigger-deploy-github]
+    needs: [deploy-github]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/release.yml@main
     with:
       release_Features: ${{ inputs.release_Features }}
@@ -201,14 +201,14 @@ jobs:
 
   publish-changelog:
     if: ${{ inputs.publish_changelog_available }}
-    needs: [trigger-deploy-github]
+    needs: [deploy-github]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/changelog.yml@main
     with:
       changelog_file: ${{ inputs.changelog_file }}
 
   changed-files:
     if: ${{ inputs.changed_files_available }}
-    needs: [trigger-deploy-github]
+    needs: [deploy-github]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/changed-files.yml@main
     with:
       files_pattern: ${{ inputs.files_pattern }}

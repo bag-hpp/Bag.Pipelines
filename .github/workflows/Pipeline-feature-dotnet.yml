@@ -37,8 +37,8 @@ jobs:
       owasp_scan_path: 'src'       
       publish_changelog_available: false
       changed_files_available: false
-      publish_docker_available: false
-      deploy_with_github_available: false
+      build_docker_available: false
+      deploy_github_available: false
       release_available: false
       static_code_analysis_available: false
       codeql_available: false
