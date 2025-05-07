@@ -18,12 +18,12 @@ on:
       unit_tests_available:
         description : "unit tests available"   
         required: false
-        type: string    
+        type: boolean    
         default: true     
       integration_tests_available:
         description : "integration tests available"   
         required: false
-        type: string    
+        type: boolean    
         default: true                 
     outputs:
       gh_runner:
