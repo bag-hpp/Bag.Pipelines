@@ -125,9 +125,7 @@ jobs:
     with:
       node-version:  ${{ inputs.node_version }}
       package-manager:  ${{ inputs.package_manager }}
-      build-location:  ${{ inputs.build_location }}
-    secrets:
-      AZURE_STATIC_WEBS_APP_DEPLOYMENT_TOKEN: ${{ secrets.AZURE_STATIC_WEBS_APP_DEPLOYMENT_TOKEN }}      
+      build-location:  ${{ inputs.build_location }}   
 
   owasp-scan:
     if: ${{ inputs.owasp_available }}
