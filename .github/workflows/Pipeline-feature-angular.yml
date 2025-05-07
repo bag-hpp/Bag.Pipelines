@@ -15,7 +15,6 @@ permissions:
 
 jobs:
   pipeline-feature-angular:
-    if: github.ref != 'refs/heads/main'
     uses: bag-hpp/Bag.Pipelines/.github/workflows/cicd-angular.yml@main
     with:
       gh_runner: 'ubuntu-latest'

@@ -15,7 +15,6 @@ permissions:
 
 jobs:
   pipeline-feature-dotnet:
-    if: github.ref != 'refs/heads/main'
     uses: bag-hpp/Bag.Pipelines/.github/workflows/cicd-dotnet.yml@main
     with:
       gh_runner: 'ubuntu-latest'
