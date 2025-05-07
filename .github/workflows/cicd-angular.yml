@@ -131,7 +131,7 @@ jobs:
 
   owasp-scan:
     if: ${{ inputs.owasp_available }}
-    needs: build
+    needs: [build]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/owasp.yml@main    
     with:
       project_path: ${{ inputs.owasp_scan_path }}
@@ -139,7 +139,7 @@ jobs:
 
   build-scan-and-push-docker:
     if: ${{ inputs.docker_build_scan_and_push_available }}
-    needs: [build, owasp-scan]
+    needs: [build]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/docker-build-and-push.yml@main
     with:
       registry: ${{ inputs.reg_name }}
@@ -149,28 +149,19 @@ jobs:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}   
 
   trigger-deploy-github:
-    if: ${{ inputs.deploy_with_github_available }}
-    needs: build-scan-and-push-docker
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger deploy-containerapp workflow
-        uses: peter-evans/repository-dispatch@v3
-        with:
-          token: ${{ secrets.GH_PAT }}
-          event-type: trigger-deploy-containerapp
-          client-payload: |
-            {
-               "reg_name": "${{ inputs.reg_name }}",
-               "imageToDeploy": "${{ inputs.reg_name }}.azurecr.io/${{ inputs.app_name }}:${{ github.run_number }}",
-               "app_name": "${{ inputs.app_name }}",
-               "resource_group": "${{ inputs.resource_group }}",
-               "containerAppName": "${{ inputs.containerAppName }}"
-
-            }                        
+    needs: [build]
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/deploy-with-github.yml@main
+    with:
+      registry: ${{ inputs.reg_name }}
+      app_name: ${{ inputs.app_name }}
+      resource_group: ${{ inputs.resource_group }}
+      containerAppName: ${{ inputs.containerAppName }} 
+    secrets:
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}                            
 
   release:
     if: ${{ inputs.release_available  }}
-    needs: trigger-deploy-github
+    needs: [trigger-deploy-github]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/release.yml@main
     with:
       release_Features: ${{ inputs.release_Features }}
@@ -179,14 +170,14 @@ jobs:
 
   publish-changelog:
     if: ${{ inputs.publish_changelog_available }}
-    needs: trigger-deploy-github
+    needs: [trigger-deploy-github]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/changelog.yml@main
     with:
       changelog_file: ${{ inputs.changelog_file }}
 
   changed-files:
     if: ${{ inputs.changed_files_available }}
-    needs: trigger-deploy-github
+    needs: [trigger-deploy-github]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/changed-files.yml@main
     with:
       files_pattern: ${{ inputs.files_pattern }}
