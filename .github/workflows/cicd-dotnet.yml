@@ -41,7 +41,7 @@ on:
       ignored_files:
         required: true
         type: string
-        default: "src/test/** docs/**".gitignore'
+        default: 'src/test/** docs/**".gitignore'
       report_format:
         required: true
         type: string

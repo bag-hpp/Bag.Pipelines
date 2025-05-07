@@ -34,7 +34,6 @@ jobs:
       changelog_file: 'CHANGELOG.md'
       sonar_available: false
       sonar_project_name: ''
-      sonar_available: false
       owasp_available: false
       owasp_scan_path: 'projects'
       publish_changelog_available: false

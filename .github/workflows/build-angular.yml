@@ -16,7 +16,7 @@ on:
       gh_runner:
         required: false
         type: string
-        default: "ubuntu-latest"s
+        default: "ubuntu-latest"
 
 jobs:
   angular:

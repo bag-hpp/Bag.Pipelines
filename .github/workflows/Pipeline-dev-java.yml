@@ -32,7 +32,6 @@ jobs:
       release_refactoring: ''
       sonar_available: false
       sonar_project_name: ''
-      owasp_available: false
       owasp_scan_path: 'src'       
       publish_changelog_available: false
       changed_files_available: false

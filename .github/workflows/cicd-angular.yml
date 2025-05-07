@@ -9,8 +9,8 @@ on:
         default: 'ubuntu-latest'
       runtime:
         required: false
-        required: 'angular'
         type: string
+        default: 'angular'
       reg_name:
         required: true
         type: string
