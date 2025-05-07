@@ -1,9 +1,8 @@
-name: Feature Pipeline Angular
+name: Dev Pipeline Angular
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ] 
 
 permissions:
   contents: write
@@ -18,10 +17,10 @@ jobs:
     with:
       gh_runner: 'ubuntu-latest'
       runtime: 'angular'
-      reg_name: 'bagcrmgmacrcorchn0'
-      app_name: 'edi-bag-cr/ncds/fe'
-      resource_group: 'bag-rg-cr-dev-chn-0'
-      containerAppName: 'bag-ca-cr-ncds-fe-dev-chn-0'
+      reg_name: '' #bagcrmgmacrcorchn0
+      app_name: '' #edi-bag-cr/ncds/fe
+      resource_group: '' #bag-rg-cr-dev-chn-0
+      containerAppName: '' #bag-ca-cr-ncds-fe-dev-chn-0
       files_pattern: "src/main/**"
       ignored_files: "src/test/** docs/**"
       report_format: 'HTML'    
@@ -38,8 +37,8 @@ jobs:
       owasp_scan_path: 'projects'
       publish_changelog_available: false
       changed_files_available: false
-      publish_docker_available: true
-      deploy_with_github_available: true
+      build_docker_available: true     
+      deploy_github_available: true
       release_available: false
       #static_code_analysis_available: false
       #codeql_available: false

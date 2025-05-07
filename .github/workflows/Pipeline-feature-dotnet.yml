@@ -1,9 +1,9 @@
 name: Feature Pipeline dotnet
 
 on:
-  pull_request:
+  push:
     branches:
-      - main
+      - '**'
 
 permissions:
   contents: write
@@ -14,16 +14,17 @@ permissions:
 
 jobs:
   pipeline-feature-dotnet:
+    if: github.ref != 'refs/heads/main'
     uses: bag-hpp/Bag.Pipelines/.github/workflows/cicd-dotnet.yml@main
     with:
       gh_runner: 'ubuntu-latest'
       runtime: 'dotnet'
       solution_file: ''
       dotnet_version: '8.0.x'
-      reg_name: 'bagcrmgmacrcorchn0'
-      app_name: 'edi-bag-cr/ncds/be'
-      resource_group: 'bag-rg-cr-dev-chn-0'
-      containerAppName: 'bag-ca-cr-ncds-dev-chn-0'
+      reg_name: '' #bagcrmgmacrcorchn0
+      app_name: '' #edi-bag-cr/ncds/be
+      resource_group: '' #bag-rg-cr-dev-chn-0
+      containerAppName: '' #bag-ca-cr-ncds-dev-chn-0
       changelog_file: 'CHANGELOG.md'
       files_pattern: "src/main/**"
       ignored_files: "src/test/** docs/**"

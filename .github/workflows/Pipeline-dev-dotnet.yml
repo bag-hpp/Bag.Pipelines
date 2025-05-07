@@ -1,9 +1,8 @@
-name: Feature Pipeline dotnet
+name: Dev Pipeline dotnet
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ] 
 
 permissions:
   contents: write
@@ -20,10 +19,10 @@ jobs:
       runtime: 'dotnet'
       solution_file: ''
       dotnet_version: '8.0.x'
-      reg_name: 'bagcrmgmacrcorchn0'
-      app_name: 'edi-bag-cr/ncds/be'
-      resource_group: 'bag-rg-cr-dev-chn-0'
-      containerAppName: 'bag-ca-cr-ncds-dev-chn-0'
+      reg_name: '' #bagcrmgmacrcorchn0
+      app_name: '' #edi-bag-cr/ncds/be
+      resource_group: '' #bag-rg-cr-dev-chn-0
+      containerAppName: '' #bag-ca-cr-ncds-dev-chn-0
       changelog_file: 'CHANGELOG.md'
       files_pattern: "src/main/**"
       ignored_files: "src/test/** docs/**"
@@ -33,11 +32,12 @@ jobs:
       release_refactoring: ''
       sonar_available: false
       sonar_project_name: ''
+      owasp_available: false
       owasp_scan_path: 'src'       
       publish_changelog_available: false
       changed_files_available: false
-      publish_docker_available: true
-      deploy_with_github_available: true
+      build_docker_available: true     
+      deploy_github_available: true
       release_available: false
       static_code_analysis_available: false
       codeql_available: false

@@ -1,9 +1,8 @@
-name: Feature Pipeline java
+name: Dev Pipeline java
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ] 
 
 permissions:
   contents: write
@@ -14,16 +13,16 @@ permissions:
 
 jobs:
   pipeline-feature-java:
-    uses: bag-hpp/Bag.Pipelines/.github/workflows/cicd-java.yml@main
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/CICD/cicd-java.yml@main
     with:
       gh_runner: 'ubuntu-latest'
       runtime: 'java'
       distribution: 'temurin'
-      reg_name: 'bagcrmgmacrcorchn0'
-      app_name: 'edi-bag-cr/ncds/fe'
+      reg_name: '' #bagcrmgmacrcorchn0
+      app_name: '' #edi-bag-cr/ncds/fe
+      resource_group: '' #bag-rg-cr-dev-chn-0
+      containerAppName: '' #bag-ca-cr-ncds-fe-dev-chn-0
       changelog_file: 'CHANGELOG.md'
-      resource_group: 'bag-rg-cr-dev-chn-0'
-      containerAppName: 'bag-ca-cr-ncds-fe-dev-chn-0'
       files_pattern: "src/**"
       ignored_files: 'node_modules/** .gitignore'
       report_format: 'HTML'
@@ -32,11 +31,12 @@ jobs:
       release_refactoring: ''
       sonar_available: false
       sonar_project_name: ''
+      owasp_available: false
       owasp_scan_path: 'src'       
       publish_changelog_available: false
       changed_files_available: false
-      publish_docker_available: true
-      deploy_with_github_available: true
+      build_docker_available: true     
+      deploy_github_available: true
       release_available: false
       static_code_analysis_available: false
       codeql_available: false

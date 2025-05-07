@@ -1,9 +1,9 @@
 name: Feature Pipeline Angular
 
 on:
-  pull_request:
+  push:
     branches:
-      - main
+      - '**'
 
 permissions:
   contents: write
@@ -14,14 +14,15 @@ permissions:
 
 jobs:
   pipeline-feature-angular:
+    if: github.ref != 'refs/heads/main'
     uses: bag-hpp/Bag.Pipelines/.github/workflows/cicd-angular.yml@main
     with:
       gh_runner: 'ubuntu-latest'
       runtime: 'angular'
-      reg_name: 'bagcrmgmacrcorchn0'
-      app_name: 'edi-bag-cr/ncds/fe'
-      resource_group: 'bag-rg-cr-dev-chn-0'
-      containerAppName: 'bag-ca-cr-ncds-fe-dev-chn-0'
+      reg_name: '' #bagcrmgmacrcorchn0
+      app_name: '' #edi-bag-cr/ncds/fe
+      resource_group: '' #bag-rg-cr-dev-chn-0
+      containerAppName: '' #bag-ca-cr-ncds-fe-dev-chn-0
       files_pattern: "src/main/**"
       ignored_files: "src/test/** docs/**"
       report_format: 'HTML'    
