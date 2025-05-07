@@ -101,10 +101,12 @@ on:
         description: "static code analyse available"
         required: false
         type: string    
+        default: false
       codeql_available:
         description: "codeql available"
         required: false
         type: string   
+        default: false
       docker_build_scan_and_push_available: 
         description: 'docker build scan and push available'
         required: false
