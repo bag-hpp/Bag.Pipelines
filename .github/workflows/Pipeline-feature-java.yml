@@ -2,8 +2,9 @@ name: Feature Pipeline java
 
 on:
   push:
-    branches:
-      - '**'
+    branches-ignore: [ "main" ] 
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 permissions:
   contents: write
