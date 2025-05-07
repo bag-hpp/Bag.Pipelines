@@ -3,7 +3,10 @@ name: Build Code and Publish Artifacts
 on:
   workflow_call:
     inputs:
-      runtime:
+      gh_runner:
+        required: true
+        type: string
+        default: 'ubuntu-latest'
       java_version:
         description: 'Java version to use'
         required: false

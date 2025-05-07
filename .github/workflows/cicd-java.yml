@@ -137,15 +137,6 @@ jobs:
     with:
       java_version: ${{ inputs.java_version }}
       distribution: ${{ inputs.distribution }}
-      reg_name: ${{ inputs.reg_name }}
-      app_name: ${{ inputs.app_name }}
-      environment: ${{ inputs.environment }}
-      changelog_file: ${{ inputs.changelog_file }}
-      resource_group: ${{ inputs.resource_group }}
-      sonar_available: ${{ inputs.sonar_available }}
-      release: ${{ inputs.release }}
-      ignored_files: ${{ inputs.ignored_files }}
-      files_pattern: ${{ inputs.files_pattern }}
       gh_runner: ${{ inputs.gh_runner }}
 
   static-code-analysis:

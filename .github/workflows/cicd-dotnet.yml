@@ -132,17 +132,9 @@ jobs:
   build:
     uses: bag-hpp/Bag.Pipelines/.github/workflows/build-dotnet.yml@main
     with:
+      gh_runner: ${{ inputs.gh_runner }}
       dotnet_version: ${{ inputs.dotnet_version }} 
       solution_file: ${{ inputs.solution_file }} 
-      reg_name: ${{ inputs.reg_name }}
-      app_name: ${{ inputs.app_name }}
-      changelog_file: ${{ inputs.changelog_file }}
-      resource_group: ${{ inputs.resource_group }}
-      sonar_available: ${{ inputs.sonar_available }}
-      release: ${{ inputs.release }}
-      ignored_files: ${{ inputs.ignored_files }}
-      files_pattern: ${{ inputs.files_pattern }}
-      gh_runner: ${{ inputs.gh_runner }}
 
   static-code-analysis:
     if: ${{ inputs.static_code_analysis_available }}
