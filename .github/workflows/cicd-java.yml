@@ -73,7 +73,7 @@ on:
         description: "static code analyse available"
         required: false
         type: string    
-      owasp_scan_available: 
+      owasp_available: 
         description: 'owasp scan available'
         required: false
         type: string
@@ -126,10 +126,10 @@ on:
         required: false
       SONAR_HOST_URL:
         required: false
-      GH_PAT:
-        required: true   
       SONAR_PROJECT_KEY:   
-        required: true    
+        required: true     
+      GH_PAT:
+        required: true     
 
 jobs:
   build:
