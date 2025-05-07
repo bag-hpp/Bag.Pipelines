@@ -74,7 +74,7 @@ on:
       owasp_available: 
         description: 'owasp scan available'
         required: false
-        type: string
+        type: boolean
         default: false   
       owasp_scan_path: 
         description: 'owasp scan path'
@@ -84,7 +84,7 @@ on:
       publish_changelog_available:
         description: 'publish changelog available'
         required: false
-        type: string
+        type: boolean
         default: false   
       changed_files_available:
         description: 'changed files available'
@@ -94,12 +94,12 @@ on:
       docker_build_scan_and_push_available:
         description: 'publish docker available'
         required: false
-        type: string
+        type: boolean
         default: false 
       deploy_with_github_available:
         description: 'deploy with github available'
         required: false
-        type: string
+        type: boolean
         default: false 
       release_available:
         description: 'release available'

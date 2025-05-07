@@ -72,12 +72,12 @@ on:
       static_code_analysis_available:
         description: "static code analyse available"
         required: false
-        type: string  
+        type: boolean  
         default: false  
       owasp_available: 
         description: 'owasp scan available'
         required: false
-        type: string
+        type: boolean
         default: false   
       owasp_scan_path: 
         description: 'owasp scan path'
@@ -87,22 +87,22 @@ on:
       codeql_available: 
         description: 'codeql available'
         required: false
-        type: string
+        type: boolean
         default: false  
       publish_changelog_available:
         description: 'publish changelog available'
         required: false
-        type: string
+        type: boolean
         default: false   
       changed_files_available:
         description: 'changed files available'
         required: false
-        type: string
+        type: boolean
         default: false 
       publish_docker_available:
         description: 'publish docker available'
         required: false
-        type: string
+        type: boolean
         default: false 
       release_available:
         description: 'release available'
