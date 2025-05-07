@@ -1,47 +1,49 @@
 name: Deploy Docker Image from Github actions
- 
+
 on:
   workflow_call:
-     inputs:
-       gh_runner:
-         required: false
-         type:  string
-         default: "ubuntu-latest"  
-       reg_name:
-          required: true
-          type: string
-       imageToDeploy:
-         required: true
-         type: string
-       resource_group:
-         required: true
-         type: string      
-       containerAppName:  
-         required: true
-         type: string      
-     secrets:
-       AZURE_CREDENTIALS:
-         required: true
- 
+    inputs:
+      gh_runner:
+        required: false
+        type:     string
+        default:  "ubuntu-latest" 
+      registry:
+        required: true
+        type: string
+      app_name:
+        required: true
+        type: string
+      resource_group:
+        required: true
+        type: string  
+      containerAppName:
+        required: true
+        type: string     
+    secrets:
+      AZURE_CREDENTIALS:
+        required: true
+
 jobs:
-   deploy-with-github:
-     runs-on: ${{ inputs.gh_runner }}
-     steps:
-       - name: Checkout Code
-         uses: actions/checkout@v2 
- 
-       - name: Log in to Azure
-         uses: azure/login@v2
-         with:
-           creds: ${{ secrets.AZURE_CREDENTIALS }}
- 
-       - name: Login to ACR
-         run: |
-           az acr login -n ${{ inputs.reg_name }}
- 
-       - name: Deploy container app with github
-         uses: azure/container-apps-deploy-action@v1
-         with:
-           containerAppName: ${{ inputs.containerAppName }}
-           imageToDeploy: ${{ inputs.imageToDeploy }}
-           resourceGroup: ${{ inputs.resource_group }}   
+  github-deploy:
+    runs-on: ${{ inputs.gh_runner }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2 
+        with:
+          fetch-depth: 0
+
+      - name: Log in to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Login to ACR
+        run: |
+          az acr login -n ${{ inputs.registry }}
+
+      - name: Deploy Container App
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          containerAppName: ${{ inputs.containerAppName }}
+          imageToDeploy: ${{ inputs.registry }}.azurecr.io/${{ inputs.app_name }}:${{ github.run_number }}
+          resourceGroup: ${{ inputs.resource_group }}   
