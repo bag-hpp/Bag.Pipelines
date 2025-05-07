@@ -140,6 +140,7 @@ jobs:
 
   static-code-analysis:
     if: ${{ inputs.static_code_analysis_available }}
+    needs: build
     uses: bag-hpp/Bag.Pipelines/.github/workflows/static-code-analysis.yml@main
     with:
       runtime: ${{ inputs.runtime }}
@@ -151,7 +152,7 @@ jobs:
       SONAR_PROJECT_KEY:  ${{ secrets.SONAR_PROJECT_KEY }}
   
   owasp-scan:    
-    if: ${{ inputs.owasp_scan_available }}
+    if: ${{ inputs.owasp_available }}
     needs: build
     uses: bag-hpp/Bag.Pipelines/.github/workflows/owasp.yml@main    
     with:

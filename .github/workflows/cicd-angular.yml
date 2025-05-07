@@ -130,7 +130,7 @@ jobs:
       AZURE_STATIC_WEBS_APP_DEPLOYMENT_TOKEN: ${{ secrets.AZURE_STATIC_WEBS_APP_DEPLOYMENT_TOKEN }}      
 
   owasp-scan:
-    if: ${{ inputs.owasp_scan_available }}
+    if: ${{ inputs.owasp_available }}
     needs: build
     uses: bag-hpp/Bag.Pipelines/.github/workflows/owasp.yml@main    
     with:

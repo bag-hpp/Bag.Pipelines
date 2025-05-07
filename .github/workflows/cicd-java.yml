@@ -154,7 +154,7 @@ jobs:
       SONAR_PROJECT_KEY:  ${{ secrets.SONAR_PROJECT_KEY }} 
 
   owasp-scan:
-    if: ${{ inputs.owasp_scan_available }}
+    if: ${{ inputs.owasp_available }}
     needs: build
     uses: bag-hpp/Bag.Pipelines/.github/workflows/owasp.yml@main    
     with:
@@ -162,8 +162,8 @@ jobs:
       report_format: ${{ inputs.report_format }} 
 
   codeql:
-    needs: build
     if: ${{ inputs.codeql_available }}
+    needs: build
     uses: bag-hpp/Bag.Pipelines/.github/workflows/codeql-java.yml@main    
     with:
       java_version: ${{ inputs.java_version }}
@@ -181,8 +181,8 @@ jobs:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}             
 
   trigger-deploy-github:
-    needs: build-scan-and-push-docker
     if: ${{ inputs.deploy_with_github_available }}
+    needs: build-scan-and-push-docker
     runs-on: ubuntu-latest
     steps:
       - name: Trigger deploy-containerapp workflow
