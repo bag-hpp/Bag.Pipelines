@@ -148,7 +148,7 @@ jobs:
 
   deploy-github:
     if: ${{ inputs.deploy_github_available }}
-    needs: [build]
+    needs: [build-docker]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/deploy-with-github.yml@main
     with:
       registry: ${{ inputs.reg_name }}
