@@ -226,7 +226,7 @@ jobs:
   changed-files:
     if: ${{ inputs.changed_files_available }}
     needs: trigger-deploy-github
-    uses: bag-hpp/Bag.Pipelines/.github/workflows/changed-files.yaml@main
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/changed-files.yml@main
     with:
       files_pattern: ${{ inputs.files_pattern }}
       ignored_files: ${{ inputs.ignored_files }}      
