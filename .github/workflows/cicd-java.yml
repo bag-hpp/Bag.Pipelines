@@ -38,10 +38,6 @@ on:
       resource_group:
         required: true
         type: string
-      sonar_available:
-        required: true
-        type: boolean
-        default: true
       files_pattern:
         required: true
         type: string
@@ -69,56 +65,11 @@ on:
         description: "release Refactoring"
         required: false
         type: string    
-      static_code_analysis_available:
-        description: "static code analyse available"
-        required: false
-        type: boolean  
-        default: false  
-      owasp_available: 
-        description: 'owasp scan available'
-        required: false
-        type: boolean
-        default: false   
       owasp_scan_path: 
         description: 'owasp scan path'
         required: false
         type: string
-        default: 'src'   
-      codeql_available: 
-        description: 'codeql available'
-        required: false
-        type: boolean
-        default: false  
-      publish_changelog_available:
-        description: 'publish changelog available'
-        required: false
-        type: boolean
-        default: false   
-      changed_files_available:
-        description: 'changed files available'
-        required: false
-        type: boolean
-        default: false 
-      publish_docker_available:
-        description: 'publish docker available'
-        required: false
-        type: boolean
-        default: false 
-      release_available:
-        description: 'release available'
-        required: true
-        type: boolean
-        default: false
-      build_docker_available: 
-        description: 'docker build scan and push available'
-        required: false
-        type: boolean
-        default: false
-      deploy_github_available:
-        description: 'deploy with github available'
-        required: false
-        type: boolean
-        default: false
+        default: 'src'  
         
     secrets:
       AZURE_CREDENTIALS:
@@ -141,7 +92,6 @@ jobs:
       gh_runner: ${{ inputs.gh_runner }}
 
   static-code-analysis:
-    if: ${{ inputs.static_code_analysis_available }}
     needs: [build]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/static-code-analysis.yml@main
     with:
@@ -155,7 +105,6 @@ jobs:
       SONAR_PROJECT_KEY:  ${{ secrets.SONAR_PROJECT_KEY }} 
 
   owasp-scan:
-    if: ${{ inputs.owasp_available }}
     needs: [build]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/owasp.yml@main    
     with:
@@ -163,7 +112,6 @@ jobs:
       report_format: ${{ inputs.report_format }} 
 
   codeql:
-    if: ${{ inputs.codeql_available }}
     needs: [build]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/codeql-java.yml@main    
     with:
@@ -172,7 +120,6 @@ jobs:
       build_location_name_java: ${{ inputs.build_location_name }}
 
   build-docker:
-    if: ${{ inputs.build_docker_available }}
     needs: [codeql, owasp-scan, static-code-analysis]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/docker-build-and-push.yml@main
     with:
@@ -183,7 +130,6 @@ jobs:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}             
 
   deploy-github:
-    if: ${{ inputs.deploy_github_available }}
     needs: [build-docker]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/deploy-with-github.yml@main
     with:
@@ -195,7 +141,6 @@ jobs:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}                      
 
   release:
-    if: ${{ inputs.release_available }}
     needs: [build-docker]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/release.yml@main
     with:
@@ -204,14 +149,12 @@ jobs:
       release_refactoring: ${{ inputs.release_refactoring }}   
 
   publish-changelog:
-    if: ${{ inputs.publish_changelog_available }}
     needs: [build-docker]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/changelog.yml@main
     with:
       changelog_file: ${{ inputs.changelog_file }}
 
   changed-files:
-    if: ${{ inputs.changed_files_available }}
     needs: [build-docker]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/changed-files.yml@main
     with:

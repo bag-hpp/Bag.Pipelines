@@ -32,17 +32,8 @@ jobs:
       release_Features: ''
       bugfixes: ''
       release_refactoring: ''
-      sonar_available: false
       sonar_project_name: ''
-      owasp_available: false
       owasp_scan_path: 'src'       
-      publish_changelog_available: false
-      changed_files_available: false
-      build_docker_available: true     
-      deploy_github_available: true
-      release_available: false
-      static_code_analysis_available: false
-      codeql_available: false
     secrets:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
