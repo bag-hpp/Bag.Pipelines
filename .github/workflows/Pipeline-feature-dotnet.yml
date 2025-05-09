@@ -17,6 +17,7 @@ jobs:
   pipeline-feature-dotnet:
     uses: bag-hpp/Bag.Pipelines/.github/workflows/build-dotnet.yml@main
     with:
+      runtime: 'dotnet'
       gh_runner: 'ubuntu-latest'
       solution_file: ''
       dotnet_version: '8.0.x'
