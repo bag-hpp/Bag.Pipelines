@@ -19,5 +19,6 @@ jobs:
     with:
       gh_runner: 'ubuntu-latest'
       node_version: '20.18.0'
+      package_manager: 'npm' 
       build_location: 'dist/browser'  
       build_location_name: 'frontend-build'
