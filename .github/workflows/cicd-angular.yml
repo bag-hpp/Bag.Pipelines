@@ -128,7 +128,9 @@ jobs:
     if: ${{ inputs.static_code_analysis_available }}
     needs: [build]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/static-code-analysis.yml@main
-    secrets:
+    secrets:      
+      runtime: ${{ inputs.runtime }}
+      sonar_project_name: ${{ inputs.sonar_project_name }}
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
       SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} 
       SONAR_PROJECT_KEY:  ${{ secrets.SONAR_PROJECT_KEY }}
