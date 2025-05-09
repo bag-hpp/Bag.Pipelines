@@ -19,25 +19,15 @@ on:
 
 jobs:
   analyze:
-    name: Analyze
+    name: Analyze csharp
     runs-on: ${{ inputs.gh_runner }}
 
-    strategy:
-      fail-fast: false
-      matrix:
-        language: [ 'typescript' ]
+    permissions:
+      security-events: write
+      packages: read
+      actions: read
+      contents: read
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
-      with:
-        languages: ${{ matrix.language }}
-
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v2
-
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-acti
+    - name: Set up code ql
+      run: echo 'Hello I'm not ready yet'
