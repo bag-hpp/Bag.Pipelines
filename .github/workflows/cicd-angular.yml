@@ -110,7 +110,7 @@ jobs:
   
   codeql:
     needs: [build]
-    uses: bag-hpp/Bag.Pipelines/.github/workflows/codeql-dotnet.yml@main    
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/codeql-angular.yml@main    
     with:
       build_location: ${{ inputs.build_location }}
       build_location_name: ${{ inputs.build_location_name }}

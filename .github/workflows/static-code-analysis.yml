@@ -35,7 +35,7 @@ on:
         required: true
         
 jobs:
-  analysis:
+  static-code-analysis:
     runs-on: ${{ inputs.gh_runner }}
     steps:
       - name: Checkout Code
@@ -43,10 +43,12 @@ jobs:
         with:
           fetch-depth: 0    
 
-      # Java specific setup
+      # Angular specific setup
       - name: Set up Angular
         if: ${{ inputs.runtime == 'angular' }}
-        run: echo 'Hello I'm not ready yet'
+        run: | 
+          echo 'Hello I'm not ready yet'
+          exit 0
 
       # Java specific setup
       - name: Set up JDK (Java)
