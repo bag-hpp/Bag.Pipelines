@@ -61,11 +61,7 @@ on:
         description: 'Package manager (npm, yarn, pnpm)'
         required: true
         type: string
-        default: npm    
-      build_location:   
-        description: "FE build location"
-        required: false
-        type: string      
+        default: npm      
       changelog_file:
         required: true
         type: string
