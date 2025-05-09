@@ -126,7 +126,6 @@ jobs:
     uses: bag-hpp/Bag.Pipelines/.github/workflows/build-angular.yml@main
     with:
       node_version:  ${{ inputs.node_version }}
-      package_manager:  ${{ inputs.package_manager }}
       build_location:  ${{ inputs.build_location }}   
       build_location_name:  ${{ inputs.build_location_name }}  
 
