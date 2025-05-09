@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   pipeline-feature-dotnet:
-    uses: bag-hpp/Bag.Pipelines/.github/workflows/cicd/cicd-dotnet.yml@main
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/cicd-dotnet.yml@main
     with:
       gh_runner: 'ubuntu-latest'
       runtime: 'dotnet'

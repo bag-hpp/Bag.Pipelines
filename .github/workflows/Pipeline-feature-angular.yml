@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   build-angular:
-    uses: bag-hpp/Bag.Pipelines/.github/workflows/build/build-angular.yml@main
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/build-angular.yml@main
     with:
       gh_runner: 'ubuntu-latest'
       node_version: '20.18.0'
