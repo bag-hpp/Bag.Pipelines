@@ -20,19 +20,10 @@ on:
       build_location_java:
         required: false
         type: string
-      build_location_name_java:
+      build_location:
         required: false
         type: string
-      build_location_angular:
-        required: false
-        type: string
-      build_location_name_angular:
-        required: false
-        type: string
-      build_location_dotnet:
-        required: false
-        type: string
-      build_location_name_dotnet:
+      build_location_name:
         required: false
         type: string
     secrets:
@@ -50,21 +41,21 @@ jobs:
         if: ${{ inputs.runtime == 'java' }}
         uses: actions/download-artifact@v4
         with:
-          name: ${{ inputs.build_location_name_java }}
+          name: ${{ inputs.build_location_name }}
 
       - name: Download DLL artifact (.NET)
         if: ${{ inputs.runtime == 'dotnet' }}
         uses: actions/download-artifact@v4
         with:
-          name: ${{ inputs.build_location_name_dotnet }}
-          path: ${{ inputs.build_location_dotnet }}
+          name: ${{ inputs.build_location_name }}
+          path: ${{ inputs.build_location }}
 
       - name: Download Frontend Build Artifact
         if: ${{ inputs.runtime == 'angular' }}
         uses: actions/download-artifact@v4
         with:
-          name: ${{ inputs.build_location_name_angular }}
-          path: ${{ inputs.build_location_angular }}
+          name: ${{ inputs.build_location_name }}
+          path: ${{ inputs.build_location }}
 
       - name: Build Docker Image
         run: |

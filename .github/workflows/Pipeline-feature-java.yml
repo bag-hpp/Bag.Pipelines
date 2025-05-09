@@ -20,5 +20,5 @@ jobs:
       gh_runner: 'ubuntu-latest'
       runtime: 'java'
       distribution: 'temurin'
-      build_location: './publish' 
-      build_location_name: 'dotnet-app'
+      build_location: './target/*.jar' 
+      build_location_name: 'app-jar'

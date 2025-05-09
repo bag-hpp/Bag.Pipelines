@@ -94,8 +94,8 @@ jobs:
       gh_runner: ${{ inputs.gh_runner }}
       dotnet_version: ${{ inputs.dotnet_version }} 
       solution_file: ${{ inputs.solution_file }}
-      build_location_dotnet: ${{ inputs.build_location }}
-      build_location_name_dotnet: ${{ inputs.build_location_name }} 
+      build_location: ${{ inputs.build_location }}
+      build_location_name: ${{ inputs.build_location_name }} 
 
   static-code-analysis:
     needs: [build]
@@ -130,8 +130,8 @@ jobs:
       registry: ${{ inputs.reg_name }}
       app_name: ${{ inputs.app_name }}
       runtime: ${{ inputs.runtime }}
-      build_location_dotnet: ${{ inputs.build_location }}
-      build_location_name_dotnet: ${{ inputs.build_location_name }}
+      build_location: ${{ inputs.build_location }}
+      build_location_name: ${{ inputs.build_location_name }}
     secrets:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}   
 

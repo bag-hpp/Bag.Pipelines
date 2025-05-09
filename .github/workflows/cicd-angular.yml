@@ -123,8 +123,8 @@ jobs:
       registry: ${{ inputs.reg_name }}
       app_name: ${{ inputs.app_name }}
       runtime: ${{ inputs.runtime }}
-      build_location_angular: ${{ inputs.build_location }}
-      build_location_name_angular: ${{ inputs.build_location_name }}
+      build_location: ${{ inputs.build_location }}
+      build_location_name: ${{ inputs.build_location_name }}
     secrets:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}   
 

@@ -117,7 +117,7 @@ jobs:
     with:
       java_version: ${{ inputs.java_version }}
       distribution: ${{ inputs.distribution }}
-      build_location_name_java: ${{ inputs.build_location_name }}
+      build_location_name: ${{ inputs.build_location_name }}
 
   build-docker:
     needs: [codeql, owasp-scan, static-code-analysis]
