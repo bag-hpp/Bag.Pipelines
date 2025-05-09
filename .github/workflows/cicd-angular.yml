@@ -112,6 +112,7 @@ jobs:
     needs: [build]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/codeql-angular.yml@main    
     with:
+      node_version:  ${{ inputs.node_version }}
       build_location: ${{ inputs.build_location }}
       build_location_name: ${{ inputs.build_location_name }}
 
