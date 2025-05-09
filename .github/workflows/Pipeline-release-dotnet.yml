@@ -1,4 +1,4 @@
-name: Dev Pipeline java
+name: Dev Pipeline dotnet
 
 on:
   push:
@@ -12,19 +12,22 @@ permissions:
   security-events: write
 
 jobs:
-  pipeline-feature-java:
-    uses: bag-hpp/Bag.Pipelines/.github/workflows/CICD/cicd-java.yml@main
+  pipeline-feature-dotnet:
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/cicd/cicd-dotnet.yml@main
     with:
       gh_runner: 'ubuntu-latest'
-      runtime: 'java'
-      distribution: 'temurin'
+      runtime: 'dotnet'
+      solution_file: ''
+      dotnet_version: '8.0.x'
       reg_name: '' #bagcrmgmacrcorchn0
-      app_name: '' #edi-bag-cr/ncds/fe
+      app_name: '' #edi-bag-cr/ncds/be
       resource_group: '' #bag-rg-cr-dev-chn-0
-      containerAppName: '' #bag-ca-cr-ncds-fe-dev-chn-0
+      containerAppName: '' #bag-ca-cr-ncds-dev-chn-0
+      build_location: './publish' 
+      build_location_name: 'dotnet-app'
       changelog_file: 'CHANGELOG.md'
-      files_pattern: "src/**"
-      ignored_files: 'node_modules/** .gitignore'
+      files_pattern: 'src/main/**'
+      ignored_files: 'src/test/** docs/**'
       report_format: 'HTML'
       release_Features: ''
       bugfixes: ''

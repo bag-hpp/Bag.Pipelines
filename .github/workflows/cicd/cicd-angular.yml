@@ -11,6 +11,12 @@ on:
         required: false
         type: string
         default: 'angular'
+      build_location:
+        required: true
+        type: string
+      build_location_name:
+        required: true
+        type: string
       reg_name:
         required: true
         type: string
@@ -121,35 +127,55 @@ on:
 
 jobs:
   build:
-    uses: bag-hpp/Bag.Pipelines/.github/workflows/build-angular.yml@main
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/build/build-angular.yml@main
     with:
-      node-version:  ${{ inputs.node_version }}
-      package-manager:  ${{ inputs.package_manager }}
-      build-location:  ${{ inputs.build_location }}   
+      node_version:  ${{ inputs.node_version }}
+      package_manager:  ${{ inputs.package_manager }}
+      build_location:  ${{ inputs.build_location }}   
+      build_location_name:  ${{ inputs.build_location_name }}  
+
+  static-code-analysis:
+    if: ${{ inputs.static_code_analysis_available }}
+    needs: [build]
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/analysis/static-code-analysis.yml@main
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
+      SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} 
+      SONAR_PROJECT_KEY:  ${{ secrets.SONAR_PROJECT_KEY }}
 
   owasp-scan:
     if: ${{ inputs.owasp_available }}
     needs: [build]
-    uses: bag-hpp/Bag.Pipelines/.github/workflows/owasp.yml@main    
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/analysis/owasp.yml@main    
     with:
       project_path: ${{ inputs.owasp_scan_path }}
       report_format: ${{ inputs.report_format }}     
+  
+  codeql:
+    if: ${{ inputs.codeql_available }}
+    needs: [build]
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/analysis/codeql-dotnet.yml@main    
+    with:
+      build_location: ${{ inputs.build_location }}
+      build_location_name: ${{ inputs.build_location_name }}
 
   build-docker:
     if: ${{ inputs.build_docker_available }}
-    needs: [build]
-    uses: bag-hpp/Bag.Pipelines/.github/workflows/docker-build-and-push.yml@main
+    needs: [codeql, owasp-scan, static-code-analysis]
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/cicd/docker-build-and-push.yml@main
     with:
       registry: ${{ inputs.reg_name }}
       app_name: ${{ inputs.app_name }}
       runtime: ${{ inputs.runtime }}
+      build_location_angular: ${{ inputs.build_location }}
+      build_location_name_angular: ${{ inputs.build_location_name }}
     secrets:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}   
 
   deploy-github:
     if: ${{ inputs.deploy_github_available }}
     needs: [build-docker]
-    uses: bag-hpp/Bag.Pipelines/.github/workflows/deploy-with-github.yml@main
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/cicd/deploy-with-github.yml@main
     with:
       registry: ${{ inputs.reg_name }}
       app_name: ${{ inputs.app_name }}
@@ -160,8 +186,8 @@ jobs:
 
   release:
     if: ${{ inputs.release_available  }}
-    needs: [deploy-github]
-    uses: bag-hpp/Bag.Pipelines/.github/workflows/release.yml@main
+    needs: [build-docker]
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/release/release.yml@main
     with:
       release_Features: ${{ inputs.release_Features }}
       bugfixes: ${{ inputs.bugfixes }}
@@ -169,15 +195,15 @@ jobs:
 
   publish-changelog:
     if: ${{ inputs.publish_changelog_available }}
-    needs: [deploy-github]
-    uses: bag-hpp/Bag.Pipelines/.github/workflows/changelog.yml@main
+    needs: [build-docker]
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/release/changelog.yml@main
     with:
       changelog_file: ${{ inputs.changelog_file }}
 
   changed-files:
     if: ${{ inputs.changed_files_available }}
-    needs: [deploy-github]
-    uses: bag-hpp/Bag.Pipelines/.github/workflows/changed-files.yml@main
+    needs: [build-docker]
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/release/changed-files.yml@main
     with:
       files_pattern: ${{ inputs.files_pattern }}
       ignored_files: ${{ inputs.ignored_files }}     

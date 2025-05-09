@@ -17,6 +17,24 @@ on:
         description: "Runtime environment (java, dotnet, angular)"
         required: true
         type: string
+      build_location_java:
+        required: false
+        type: string
+      build_location_name_java:
+        required: false
+        type: string
+      build_location_angular:
+        required: false
+        type: string
+      build_location_name_angular:
+        required: false
+        type: string
+      build_location_dotnet:
+        required: false
+        type: string
+      build_location_name_dotnet:
+        required: false
+        type: string
     secrets:
       AZURE_CREDENTIALS:
         required: true
@@ -32,21 +50,21 @@ jobs:
         if: ${{ inputs.runtime == 'java' }}
         uses: actions/download-artifact@v4
         with:
-          name: app-jar  
+          name: ${{ inputs.build_location_name_java }}
 
       - name: Download DLL artifact (.NET)
         if: ${{ inputs.runtime == 'dotnet' }}
         uses: actions/download-artifact@v4
         with:
-          name: dotnet-app 
-          path: ./publish
+          name: ${{ inputs.build_location_name_dotnet }}
+          path: ${{ inputs.build_location_dotnet }}
 
       - name: Download Frontend Build Artifact
         if: ${{ inputs.runtime == 'angular' }}
         uses: actions/download-artifact@v4
         with:
-          name: frontend-build
-          path: ./dist/frontend-build
+          name: ${{ inputs.build_location_name_angular }}
+          path: ${{ inputs.build_location_angular }}
 
       - name: Build Docker Image
         run: |

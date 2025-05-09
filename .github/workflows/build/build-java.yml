@@ -14,7 +14,13 @@ on:
       distribution:
         description: "JDK Distribution (e.g., temurin, zulu, corretto, graalvm, oracle)"
         required: false
-        type: string                                
+        type: string  
+      build_location:
+        required: true
+        type: string
+      build_location_name:
+        required: true
+        type: string                              
     outputs:
       java_version:
         value: ${{ inputs.java_version }}
@@ -65,8 +71,8 @@ jobs:
       - name: Upload Java Jar as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-jar
-          path: ./target/*.jar   
+          name: ${{ inputs.build_location_name }}
+          path: ${{ inputs.build_location }}
     
 
      

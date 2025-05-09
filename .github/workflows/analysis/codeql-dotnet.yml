@@ -1,0 +1,47 @@
+name: "CodeQL Advanced dotnet"
+
+on:
+  workflow_call:
+    inputs:
+      gh_runner:
+        required: false
+        type:     string
+        default:  "ubuntu-latest"       
+      build_location:
+        required: true
+        type:     string      
+      build_location_name:
+        required: true
+        type:     string
+
+jobs:
+  analyze:
+    name: Analyze csharp
+    runs-on: ${{ inputs.gh_runner }}
+
+    permissions:
+      security-events: write
+      packages: read
+      actions: read
+      contents: read
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Download build artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ inputs.build_location_name }}
+        path: ${{ inputs.build_location }}
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: csharp
+
+    - name: Build Java/Kotlin project
+      run: mvn clean install -DskipTests
+
+    - name: Run CodeQL Analysis
+      uses: github/codeql-action/analyze@v3

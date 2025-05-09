@@ -15,6 +15,12 @@ on:
         description: "solution file"
         required: true
         type: string    
+      build_location:
+        required: true
+        type: string
+      build_location_name:
+        required: true
+        type: string
       unit_tests_available:
         description : "unit tests available"   
         required: false
@@ -50,7 +56,7 @@ jobs:
       - name: Set up .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: ${{ inputs.dotnet_version }}
+          dotnet_version: ${{ inputs.dotnet_version }}
 
       - name: .NET Restore
         run: dotnet restore ${{ inputs.solution_file }}
@@ -77,8 +83,8 @@ jobs:
       - name: Upload .NET Publish Output as artifact (if runtime is dotnet)
         uses: actions/upload-artifact@v4
         with:
-           name: dotnet-app
-           path: ./publish     
+          name: ${{ inputs.build_location_name }}
+          path: ${{ inputs.build_location }}   
         
     
 

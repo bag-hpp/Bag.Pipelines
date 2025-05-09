@@ -44,6 +44,11 @@ jobs:
           fetch-depth: 0    
 
       # Java specific setup
+      - name: Set up Angular
+        if: ${{ inputs.runtime == 'angular' }}
+        run: echo 'Hello I'm not ready yet'
+
+      # Java specific setup
       - name: Set up JDK (Java)
         if: ${{ inputs.runtime == 'java' }}
         uses: actions/setup-java@v4
@@ -57,7 +62,7 @@ jobs:
         if: ${{ inputs.runtime == 'dotnet' }}
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: ${{ inputs.dotnet_version }}
+          dotnet_version: ${{ inputs.dotnet_version }}
           cache: 'true'
 
       - name: Cache SonarQube packages

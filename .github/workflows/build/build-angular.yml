@@ -3,14 +3,13 @@ name: Build Frontend, Publish Artifacts, and Build Docker Image
 on:
   workflow_call:
     inputs:
-      node-version:
+      node_version:
         required: true
         type: string
-      package-manager:
+      build_location:
         required: true
         type: string
-        default: npm
-      build-location:
+      build_location_name:
         required: true
         type: string
       gh_runner:
@@ -29,7 +28,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ inputs.node-version }}
+          node_version: ${{ inputs.node_version }}
 
       - name: Clear npm cache
         run: npm cache clean --force      
@@ -47,13 +46,13 @@ jobs:
         run: npm install -g @angular/cli  
 
       - name: Build Angular App
-        run: npm run build -- --output-path=${{ inputs.build-location }}
+        run: npm run build -- --output-path=${{ inputs.build_location }}
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: frontend-build
-          path: ${{ inputs.build-location }}
+          name: ${{ inputs.build_location_name }}
+          path: ${{ inputs.build_location }}
 
       - name: Debug npm config
         run: npm config list    
