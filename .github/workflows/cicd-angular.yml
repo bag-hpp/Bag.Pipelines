@@ -8,7 +8,7 @@ on:
         type: string
         default: 'ubuntu-latest'
       runtime:
-        required: false
+        required: true
         type: string
         default: 'angular'
       build_location:
