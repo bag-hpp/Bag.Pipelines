@@ -43,13 +43,6 @@ jobs:
         with:
           fetch-depth: 0    
 
-      # Angular specific setup
-      - name: Set up Angular
-        if: ${{ inputs.runtime == 'angular' }}
-        run: | 
-          echo 'Hello I'm not ready yet'
-          exit 0
-
       # Java specific setup
       - name: Set up JDK (Java)
         if: ${{ inputs.runtime == 'java' }}
@@ -118,3 +111,8 @@ jobs:
             /d:sonar.branch.name=${{ github.ref_name }} \
           dotnet build
           dotnet sonarscanner end
+
+      # Angular specific setup
+      - name: Set up Angular
+        if: ${{ inputs.runtime == 'angular' }}
+        run: echo 'Hello I'm not ready yet'

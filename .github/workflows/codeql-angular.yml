@@ -19,9 +19,8 @@ on:
 
 jobs:
   analyze:
-    name: Analyze csharp
+    name: Analyze Angular
     runs-on: ${{ inputs.gh_runner }}
-
     permissions:
       security-events: write
       packages: read
@@ -44,7 +43,7 @@ jobs:
         languages: javascript
 
     - name: Install Node.js
-      uses: actions/setup-node@4
+      uses: actions/setup-node@3
       with:
         node_version:  ${{ inputs.node_version }}
 
