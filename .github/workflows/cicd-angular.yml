@@ -56,12 +56,7 @@ on:
       node_version:
         description: 'Node.js version to use'
         required: true
-        type: string
-      package_manager:
-        description: 'Package manager (npm, yarn, pnpm)'
-        required: true
-        type: string
-        default: npm      
+        type: string    
       changelog_file:
         required: true
         type: string
