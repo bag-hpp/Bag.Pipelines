@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       runtime:
-        description: "Runtime environment (java or dotnet)"
+        description: "Runtime environment (java, angular or dotnet)"
         required: true
         type: string
       java_version:
