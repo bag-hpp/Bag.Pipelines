@@ -66,10 +66,6 @@ jobs:
         if: ${{ inputs.runtime == 'angular' }}
         run: ls -lisa ./dist
 
-      - name: ls lisa ./dist/browser
-        if: ${{ inputs.runtime == 'angular' }}
-        run: ls -lisa ./dist/browser
-
       - name: Build Docker Image
         run: |
           IMAGE_NAME="${{ inputs.registry }}.azurecr.io/${{ inputs.app_name }}:${{ github.run_number }}"
