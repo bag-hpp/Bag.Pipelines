@@ -57,9 +57,15 @@ jobs:
 
       - name: Add dotnet tools to PATH
         run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
-
-      - name: echo host
-        run: echo ${{ secrets.SONAR_HOST_URL }}
+        
+      - name: Check if SONAR_HOST_URL is defined
+        run: |
+          if [ -z "${{ secrets.SONAR_HOST_URL }}" ]; then
+            echo "SONAR_HOST_URL is not set!"
+            exit 1
+          else
+            echo "SONAR_HOST_URL is set ✅"
+          fi
 
       # SonarQube analysis for .NET (adjusted for your case)
       - name: Build and analyze (.NET)
