@@ -1,0 +1,67 @@
+name: Static Code Analysis dotnet
+
+on:
+  workflow_call:
+    inputs:
+      dotnet_version:
+        description: "The .NET SDK version"
+        required: true
+        type: string 
+      gh_runner:
+        required: false
+        type:     string
+        default:  "ubuntu-latest" 
+      sonar_project_name:  
+        required: true
+        type: string           
+    secrets:
+      SONAR_TOKEN:
+        required: true
+      SONAR_HOST_URL:
+        required: true
+      SONAR_PROJECT_KEY:
+        required: true
+        
+jobs:
+  static-code-analysis:
+    runs-on: ${{ inputs.gh_runner }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0    
+
+      # .NET specific setup
+      - name: Set up .NET (dotnet)
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet_version: ${{ inputs.dotnet_version }}
+          cache: 'true'
+
+      - name: Cache SonarQube packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: ${{ runner.os }}-nuget
+
+      # SonarQube analysis for .NET (adjusted for your case)
+      - name: Build and analyze (.NET)
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          dotnet sonarscanner begin /k:${{ secrets.SONAR_PROJECT_KEY }} \
+            /d:sonar.projectName="${{ inputs.sonar_project_name }}" \
+            /d:sonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+            /d:sonar.token=${{ secrets.SONAR_TOKEN }} \
+            /d:sonar.branch.name=${{ github.ref_name }} \
+          dotnet build
+          dotnet sonarscanner end

@@ -97,20 +97,17 @@ jobs:
       build_location: ${{ inputs.build_location }}
       build_location_name: ${{ inputs.build_location_name }} 
 
-  #static-code-analysis:
-  #  needs: [build]
-  #  uses: bag-hpp/Bag.Pipelines/.github/workflows/static-code-analysis.yml@main
-  #  with:
-  #    runtime: ${{ inputs.runtime }}
-  #    dotnet_version: ${{ inputs.dotnet_version }}
-  #    sonar_project_name: ${{ inputs.sonar_project_name }}  
-  #  secrets:
-  #    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
-  #    SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} 
-  #    SONAR_PROJECT_KEY:  ${{ secrets.SONAR_PROJECT_KEY }}
+ static-code-analysis-dotnet:
+   uses: bag-hpp/Bag.Pipelines/.github/workflows/static-code-analysis-dotnet.yml@main
+   with:
+     dotnet_version: ${{ inputs.dotnet_version }}
+     sonar_project_name: ${{ inputs.solution_file }}  
+   secrets:
+     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
+     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} 
+     SONAR_PROJECT_KEY:  ${{ secrets.SONAR_PROJECT_KEY }}
   
   owasp-scan:    
-    needs: [build]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/owasp.yml@main    
     with:
       project_path: ${{ inputs.owasp_scan_path }}
@@ -124,7 +121,7 @@ jobs:
   #    build_location_name: ${{ inputs.build_location_name }}
 
   build-docker:
-    needs: [owasp-scan]
+    needs: [build, owasp-scan, static-code-analysis-dotnet]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/docker-build-and-push.yml@main
     with:
       registry: ${{ inputs.reg_name }}
