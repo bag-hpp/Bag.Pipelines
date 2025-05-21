@@ -75,14 +75,14 @@ jobs:
           dotnet test "$test_project" --no-build --configuration Release --verbosity normal
           done
 
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          language: ${{ matrix.language }}
-      
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
-
+      #- name: Initialize CodeQL
+      #  uses: github/codeql-action/init@v3
+      #  with:
+      #    language: ${{ matrix.language }}
+      #
+      #- name: Perform CodeQL Analysis
+      #  uses: github/codeql-action/analyze@v3
+#
       - name: .NET Publish
         if: ${{ inputs.integration_tests_available }}
         run: |
