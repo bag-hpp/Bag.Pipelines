@@ -65,7 +65,8 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
           dotnet sonarscanner begin /k:${{ secrets.SONAR_PROJECT_KEY }} \
-            /d:sonar.projectName="${{ inputs.sonar_project_name }}" \
+            /n:sonar.projectName="${{ inputs.sonar_project_name }}" \
+            /v:"1.0" \
             /d:sonar.host.url=${{ secrets.SONAR_HOST_URL }} \
             /d:sonar.token=${{ secrets.SONAR_TOKEN }} \
             /d:sonar.branch.name=${{ github.ref_name }}
