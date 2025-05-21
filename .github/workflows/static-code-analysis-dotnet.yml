@@ -51,6 +51,12 @@ jobs:
           path: ~/.nuget/packages
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
           restore-keys: ${{ runner.os }}-nuget
+          
+      - name: Install dotnet-sonarscanner
+        run: dotnet tool install --global dotnet-sonarscanner
+
+      - name: Add dotnet tools to PATH
+        run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
       # SonarQube analysis for .NET (adjusted for your case)
       - name: Build and analyze (.NET)
@@ -62,6 +68,6 @@ jobs:
             /d:sonar.projectName="${{ inputs.sonar_project_name }}" \
             /d:sonar.host.url=${{ secrets.SONAR_HOST_URL }} \
             /d:sonar.token=${{ secrets.SONAR_TOKEN }} \
-            /d:sonar.branch.name=${{ github.ref_name }} \
+            /d:sonar.branch.name=${{ github.ref_name }}
           dotnet build
           dotnet sonarscanner end
