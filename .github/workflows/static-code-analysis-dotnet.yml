@@ -58,6 +58,9 @@ jobs:
       - name: Add dotnet tools to PATH
         run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
+      - name: echo host
+        run: echo ${{ secrets.SONAR_HOST_URL }}
+
       # SonarQube analysis for .NET (adjusted for your case)
       - name: Build and analyze (.NET)
         env:
