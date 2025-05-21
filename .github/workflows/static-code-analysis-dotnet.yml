@@ -67,17 +67,19 @@ jobs:
             echo "SONAR_HOST_URL is set ✅"
           fi
 
-      # SonarQube analysis for .NET (adjusted for your case)
-      - name: Build and analyze (.NET)
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: |
-          dotnet sonarscanner begin /k:${{ secrets.SONAR_PROJECT_KEY }} \
-            /n:sonar.projectName="${{ inputs.sonar_project_name }}" \
-            /v:"1.0" \
-            /d:sonar.host.url=${{ secrets.SONAR_HOST_URL }} \
-            /d:sonar.token=${{ secrets.SONAR_TOKEN }} \
-            /d:sonar.branch.name=${{ github.ref_name }}
-          dotnet build
-          dotnet sonarscanner end
+      - name: Start SonarScanner
+        run: >
+          dotnet sonarscanner begin
+          /k:${{ secrets.SONAR_PROJECT_KEY }}
+          /n:"${{ inputs.sonar_project_name }}"
+          /v:"1.0"
+          /d:sonar.host.url=${{ secrets.SONAR_HOST_URL }}
+          /d:sonar.token=${{ secrets.SONAR_TOKEN }}
+          /d:sonar.branch.name=${{ github.ref_name }}
+      
+      - name: Build
+        run: dotnet build
+      
+      - name: End SonarScanner
+        run: dotnet sonarscanner end
+
