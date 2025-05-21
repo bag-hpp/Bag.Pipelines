@@ -26,42 +26,36 @@ jobs:
   static-code-analysis:
     runs-on: ${{ inputs.gh_runner }}
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
-          fetch-depth: 0    
-
-      # .NET specific setup
-      - name: Set up .NET (dotnet)
-        uses: actions/setup-dotnet@v3
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
         with:
-          dotnet_version: ${{ inputs.dotnet_version }}
-          cache: 'true'
-
+          java-version: 17
+          distribution: 'zulu' # Alternative distribution options are available.
       - name: Cache SonarQube packages
         uses: actions/cache@v4
         with:
-          path: ~/.sonar/cache
+          path: ~\.sonar\cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
-
-      - name: Cache NuGet packages
+      - name: Cache SonarQube scanner
+        id: cache-sonar-scanner
         uses: actions/cache@v4
         with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
-          restore-keys: ${{ runner.os }}-nuget
-
-      # SonarQube analysis for .NET (adjusted for your case)
-      - name: Build and analyze (.NET)
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          path: .\.sonar\scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
+      - name: Install SonarQube scanner
+        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+        shell: powershell
         run: |
-          dotnet sonarscanner begin /k:${{ secrets.SONAR_PROJECT_KEY }} \
-            /d:sonar.projectName="${{ inputs.sonar_project_name }}" \
-            /d:sonar.host.url=${{ secrets.SONAR_HOST_URL }} \
-            /d:sonar.token=${{ secrets.SONAR_TOKEN }} \
-            /d:sonar.branch.name=${{ github.ref_name }} \
+          New-Item -Path .\.sonar\scanner -ItemType Directory
+          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+      - name: Build and analyze
+        shell: powershell
+        run: |
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"BAG-KRG_Bag.CR.InSy_ff109557-3bcc-44dd-ae55-979d4af0779b" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}"
           dotnet build
-          dotnet sonarscanner end
+          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
