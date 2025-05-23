@@ -1,0 +1,74 @@
+name: Admin Build, Scan, and Push Docker Image
+
+on:
+  workflow_call:
+    inputs:
+      registry:
+        required: true
+        type: string
+      app_name:
+        required: true
+        type: string
+      publish_path:
+        required: true
+        type: string
+      gh_runner:
+        required: false
+        type:     string
+        default:  "ubuntu-latest"
+    secrets:
+      AZURE_CREDENTIALS:
+        required: true
+
+jobs:
+  image-build-push:
+    runs-on: ${{ inputs.gh_runner }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Download DLL artifact (.NET)
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.publish_path }}
+          path: .
+
+      - name: Build Docker Image
+        run: |
+          IMAGE_NAME="${{ inputs.registry }}.azurecr.io/${{ inputs.app_name }}:${{ github.run_number }}"
+          docker build -t $IMAGE_NAME -f Dockerfile .
+          docker images  # Überprüfe, ob das Image existiert
+
+      - name: Install Trivy for vulnerability scanning
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget gnupg
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo tee /etc/apt/trusted.gpg.d/aquasecurity.asc
+          echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -cs) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+          sudo apt-get update
+          sudo apt-get install -y trivy
+
+      - name: Log in to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Login to ACR
+        run: |
+          az acr login -n ${{ inputs.registry }}
+
+      - name: Scan Docker Image for Vulnerabilities
+        run: |
+          IMAGE_NAME="${{ inputs.registry }}.azurecr.io/${{ inputs.app_name }}:${{ github.run_number }}"
+          trivy image --severity HIGH,CRITICAL --cache-dir /tmp/trivy $IMAGE_NAME
+
+      - name: Push Docker Image to ACR
+        run: |
+          IMAGE_NAME="${{ inputs.registry }}.azurecr.io/${{ inputs.app_name }}:${{ github.run_number }}"
+          docker push $IMAGE_NAME
+
+      - name: Verify Image Exists on ACR
+        run: |
+          IMAGE_NAME="${{ inputs.registry }}.azurecr.io/${{ inputs.app_name }}:${{ github.run_number }}"
+          az acr repository show-manifests --name ${{ inputs.registry }} --repository ${{ inputs.app_name }} --query "[?tags[?contains(@, '${{ github.run_number }}')]].digest" --output table

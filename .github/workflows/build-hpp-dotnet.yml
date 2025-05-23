@@ -1,0 +1,158 @@
+name: Build Code and Publish Artifacts
+
+on:
+  workflow_call:
+    inputs:
+      dotnet_version:
+        description: ".NET SDK version (if runtime is dotnet)"
+        required: true
+        type: string
+      solution_file:
+        description: "solution file"
+        required: true
+        type: string         
+      gh_runner:
+        description: "Github runner (private/public)"
+        required: false
+        default:  "ubuntu-latest"
+        type: string      
+      publish_path_admin:  
+        description: "publish_path_admin"
+        required: true
+        type: string 
+      publish_path_betreg:  
+        description: "publish_path_betreg"
+        required: true
+        type: string 
+      publish_path_medreg:   
+        description: "publish_path_medreg"
+        required: true
+        type: string 
+      publish_path_meduse:   
+        description: "publish_path_meduse"
+        required: true
+        type: string 
+      publish_path_psyreg:   
+        description: "publish_path_psyreg"
+        required: true
+        type: string                    
+    outputs:
+      dotnet_version:
+        value: ${{ inputs.dotnet_version }}
+      solution_file:
+        value: ${{ inputs.solution_file }}
+      publish_path_admin:  
+        value: ${{ inputs.publish_path_admin }}
+      publish_path_betreg:  
+        value: ${{ inputs.publish_path_betreg }}
+      publish_path_medreg:   
+        value: ${{ inputs.publish_path_medreg }}
+      publish_path_meduse:   
+        value: ${{ inputs.publish_path_meduse }}
+      publish_path_psyreg:   
+        value: ${{ inputs.publish_path_psyreg }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      dotnet_version: ${{ inputs.dotnet_version }}
+      solution_file: ${{ inputs.solution_file }}
+      gh_runner: ${{ inputs.gh_runner }}
+      publish_path_admin:  ${{ inputs.publish_path_admin }}
+      publish_path_betreg: ${{ inputs.publish_path_betreg }}
+      publish_path_medreg: ${{ inputs.publish_path_medreg }}
+      publish_path_meduse: ${{ inputs.publish_path_meduse }}
+      publish_path_psyreg: ${{ inputs.publish_path_psyreg }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up .NET SDK (if runtime is dotnet)
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ inputs.dotnet_version }}
+
+      - name: .NET Restore
+        run: dotnet restore ${{ inputs.solution_file }}
+
+      - name: .NET Build
+        run: dotnet build ${{ inputs.solution_file }} --no-restore --configuration Release
+
+      - name: .NET Unit Tests
+        if: ${{ inputs.unit_tests_available }}
+        run: |
+          for test_project in $(find . -name '*.Tests.csproj'); do
+          echo "Running tests for $test_project"
+          dotnet test "$test_project" --no-build --configuration Release --verbosity normal
+          done
+
+      - name: .NET Integration Tests
+        if: ${{ inputs.integration_tests_available }}
+        run: |
+          for test_project in $(find . -name '*.IntegrationTests.csproj'); do
+          echo "Running tests for $test_project"
+          dotnet test "$test_project" --no-build --configuration Release --verbosity normal
+          done
+
+      - name: .NET Publish Admin
+        run: |
+          dotnet publish ./src/BAG.HealthProfessionRegister.Administration.Api/BAG.HealthProfessionRegister.Administration.Api.csproj -c Release -o ./${{ inputs.publish_path_admin }}
+          cp src/BAG.HealthProfessionRegister.Administration.Api/Dockerfile ./${{ inputs.publish_path_admin }}/
+
+      - name: .NET Publish Betreg
+        run: |
+          dotnet publish ./src/BAG.HealthProfessionRegister.Betreg.Api/BAG.HealthProfessionRegister.Betreg.Api.csproj -c Release -o ./${{ inputs.publish_path_betreg }}
+          cp src/BAG.HealthProfessionRegister.Betreg.Api/Dockerfile ./${{ inputs.publish_path_betreg }}/
+
+      - name: .NET Publish Medreg
+        run: |
+          dotnet publish ./src/BAG.HealthProfessionRegister.Medreg.Api/BAG.HealthProfessionRegister.Medreg.Api.csproj -c Release -o ./${{ inputs.publish_path_medreg }}
+          cp src/BAG.HealthProfessionRegister.Medreg.Api/Dockerfile ./${{ inputs.publish_path_medreg }}/
+
+      - name: .NET Publish Meduse
+        run: |
+          dotnet publish ./src/BAG.HealthProfessionRegister.Meduse.Api/BAG.HealthProfessionRegister.Meduse.Api.csproj -c Release -o ./${{ inputs.publish_path_meduse }}
+          cp src/BAG.HealthProfessionRegister.Meduse.Api/Dockerfile ./${{ inputs.publish_path_meduse }}/
+
+      - name: .NET Publish Psyreg
+        run: |
+          dotnet publish ./src/BAG.HealthProfessionRegister.Psyreg.Api/BAG.HealthProfessionRegister.Psyreg.Api.csproj -c Release -o ./${{ inputs.publish_path_psyreg }}
+          cp src/BAG.HealthProfessionRegister.Psyreg.Api/Dockerfile ./${{ inputs.publish_path_psyreg }}/
+
+      - name: Upload Admin Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.publish_path_admin }}
+          path: ${{ inputs.publish_path_admin }}
+
+      - name: Upload Betreg Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.publish_path_betreg }} 
+          path: ${{ inputs.publish_path_betreg }}
+
+      - name: Upload Medreg Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.publish_path_medreg }}
+          path: ${{ inputs.publish_path_medreg }}
+
+      - name: Upload Meduse Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.publish_path_meduse }}
+          path: ${{ inputs.publish_path_meduse }}
+
+      - name: Upload Psyreg Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.publish_path_psyreg }}
+          path: ${{ inputs.publish_path_psyreg }}
+        
+    
+
+     

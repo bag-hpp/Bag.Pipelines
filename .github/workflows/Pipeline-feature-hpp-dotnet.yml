@@ -1,0 +1,29 @@
+name: Feature Hpp Pipeline dotnet
+
+on:
+  push:
+    branches-ignore: [ "main" ] 
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+  actions: read
+  packages: write
+  id-token: write
+  security-events: write
+
+jobs:
+  run-reusable-ci-cd:
+    uses: bag-hpp/Bag.Hpp/.github/workflows/build-hpp-dotnet.yml@main
+    with:
+      gh_runner: 'ubuntu-latest'
+      solution_file: 'BAG-HealthProfessionRegister.sln'
+      dotnet_version: '8.0.x' 
+      publish_path_admin:  publish_admin
+      publish_path_betreg: publish_betreg
+      publish_path_medreg: publish_medreg
+      publish_path_meduse: publish_meduse
+      publish_path_psyreg: publish_psyreg
+      unit_tests_available: false
+      integration_tests_available: false

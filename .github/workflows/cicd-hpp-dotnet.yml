@@ -1,0 +1,309 @@
+name: Reusable CI/CD Pipeline
+
+on:
+  workflow_call:
+    inputs:
+      dotnet_version: 
+        required: true
+        type: string
+      solution_file:
+        required: true
+        type: string
+      reg_name:
+        required: true
+        type: string
+      app_name:
+        required: true
+        type: string
+      changelog_file:
+        required: true
+        type: string
+        default: 'CHANGELOG.md'
+      resource_group:
+        required: true
+        type: string
+      sonar_available:
+        required: true
+        type: boolean
+        default: true
+      release:
+        required: true
+        type: boolean
+        default: false
+      files_pattern:
+        required: true
+        type: string
+        default: 'src/**'
+      ignored_files:
+        required: true
+        type: string
+        default: 'node_modules/** .gitignore'
+      report_format:
+        required: true
+        type: string
+        default: 'HTML'
+      gh_runner:
+        required: true
+        type: string
+        default: 'ubuntu-latest' 
+      working_directory:
+        required: true
+        type: string    
+      sonar_project_name:  
+        required: true
+        type: string    
+      release_Features:
+        description: "release Features"
+        required: false
+        type: string      
+      bugfixes:
+        description: "release Features"
+        required: false
+        type: string      
+      release_refactoring:
+        description: "release Refactoring"
+        required: false
+        type: string
+      image_admin:          
+        description: 'image_admin'
+        required: true
+        type:     string
+      image_betreg:           
+        description: 'image_betreg'
+        required: true
+        type:     string
+      image_medreg:           
+        description: 'image_medreg'
+        required: true
+        type:     string
+      image_meduse:           
+        description: 'image_meduse'
+        required: true
+        type:     string
+      image_psyreg:           
+        description: 'image_psyreg'
+        required: true
+        type:     string   
+      container_app_admin:            
+        description: 'container_app_admin'
+        required: true
+        type:     string   
+      container_app_betreg:            
+        description: 'container_app_betreg'
+        required: true
+        type:     string   
+      container_app_medreg:            
+        description: 'container_app_medreg'
+        required: true
+        type:     string   
+      container_app_meduse:            
+        description: 'container_app_meduse'
+        required: true
+        type:     string   
+      container_app_psyreg:            
+        description: 'container_app_psyreg'
+        required: true
+        type:     string   
+      publish_path_admin:             
+        description: 'publish_path_admin'
+        required: true
+        type:     string   
+      publish_path_betreg:            
+        description: 'publish_path_betreg'
+        required: true
+        type:     string   
+      publish_path_medreg:            
+        description: 'publish_path_medreg'
+        required: true
+        type:     string   
+      publish_path_meduse:            
+        description: 'publish_path_meduse'
+        required: true
+        type:     string   
+      publish_path_psyreg:            
+        description: 'publish_path_psyreg'
+        required: true
+        type: string   
+      unit_tests_available:
+        description : "unit tests available"   
+        required: false
+        type: boolean    
+        default: true     
+      integration_tests_available:
+        description : "integration tests available"   
+        required: false
+        type: boolean    
+        default: true    
+
+    secrets:
+      AZURE_CREDENTIALS:
+        required: true
+      SONAR_TOKEN:
+        required: false
+      SONAR_HOST_URL:
+        required: false
+      GH_PAT:
+        required: true   
+      SONAR_PROJECT_KEY:   
+        required: true      
+
+jobs:
+  build-code:
+    uses: bag-hpp/Bag.Hpp/.github/workflows/build-hpp-dotnet.yml@main
+    with:
+      dotnet_version: ${{ inputs.dotnet_version }} 
+      solution_file: ${{ inputs.solution_file }} 
+      gh_runner: ${{ inputs.gh_runner }}
+      publish_path_admin:  ${{ inputs.publish_path_admin }}
+      publish_path_betreg: ${{ inputs.publish_path_betreg }}
+      publish_path_medreg: ${{ inputs.publish_path_medreg }}
+      publish_path_meduse: ${{ inputs.publish_path_meduse }}
+      publish_path_psyreg: ${{ inputs.publish_path_psyreg }}
+
+  #static-code-analysis:
+  #  uses: bag-hpp/Bag.Hpp/.github/workflows/static-code-analysis.yml@main
+  #  with:
+  #    sonar_project_name: ${{ inputs.sonar_project_name }}  
+  #  secrets:
+  #    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
+  #    SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} 
+  #    SONAR_PROJECT_KEY:  ${{ secrets.SONAR_PROJECT_KEY }} 
+
+  owasp-scan:
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/owasp.yml@main    
+    with:
+      project_path: "src"
+      report_format: ${{ inputs.report_format }}
+
+  #codeql:
+  #  needs: build-code
+  #  uses: bag-hpp/Bag.Pipelines/.github/workflows/codeql.yml@main    
+  #  with:
+  #    distribution: ${{ inputs.distribution }}
+  #    dotnet_version: ${{ inputs.dotnet_version }} 
+
+  build-scan-and-push-docker-admin:
+    needs: [build-code, owasp-scan] #, codeql, static-code-analysis]
+    uses: bag-hpp/Bag.Hpp/.github/workflows/docker-build-and-push-with-publish-path.yml@main
+    with:
+      registry: ${{ inputs.reg_name }}
+      app_name: ${{ inputs.image_admin }}
+      publish_path: ${{ inputs.publish_path_admin }}
+    secrets:
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}     
+
+  build-scan-and-push-docker-betreg:
+    needs: [build-code, owasp-scan] #, codeql, static-code-analysis]
+    uses: bag-hpp/Bag.Hpp/.github/workflows/docker-build-and-push-with-publish-path.yml@main
+    with:
+      registry: ${{ inputs.reg_name }}
+      app_name: ${{ inputs.image_betreg }}
+      publish_path: ${{ inputs.publish_path_betreg }}
+    secrets:
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}     
+
+  build-scan-and-push-docker-medreg:
+    needs: [build-code, owasp-scan] #, codeql, static-code-analysis]
+    uses: bag-hpp/Bag.Hpp/.github/workflows/docker-build-and-push-with-publish-path.yml@main
+    with:
+      registry: ${{ inputs.reg_name }}
+      app_name: ${{ inputs.image_medreg }}
+      publish_path: ${{ inputs.publish_path_medreg }}
+    secrets:
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}     
+
+  build-scan-and-push-docker-meduse:
+    needs: [build-code, owasp-scan] #, codeql, static-code-analysis]
+    uses: bag-hpp/Bag.Hpp/.github/workflows/docker-build-and-push-with-publish-path.yml@main
+    with:
+      registry: ${{ inputs.reg_name }}
+      app_name: ${{ inputs.image_meduse }}
+      publish_path: ${{ inputs.publish_path_meduse }}
+    secrets:
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}     
+
+  build-scan-and-push-docker-psyreg:
+    needs: [build-code, owasp-scan] #, codeql, static-code-analysis]
+    uses: bag-hpp/Bag.Hpp/.github/workflows/docker-build-and-push-with-publish-path.yml@main
+    with:
+      registry: ${{ inputs.reg_name }}
+      app_name: ${{ inputs.image_psyreg }}
+      publish_path: ${{ inputs.publish_path_psyreg }}
+    secrets:
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}     
+
+  deploy-with-github-admin:
+    needs: [build-scan-and-push-docker-admin]
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/deploy-with-github.yml@main
+    with:
+      registry: ${{ inputs.reg_name }}
+      app_name: ${{ inputs.image_admin }}
+      resource_group: ${{ inputs.resource_group }}
+      containerAppName: ${{ inputs.container_app_admin }} 
+    secrets:
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}     
+
+  deploy-with-github-betreg:
+    needs: [build-scan-and-push-docker-betreg]
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/deploy-with-github.yml@main
+    with:
+      registry: ${{ inputs.reg_name }}
+      app_name: ${{ inputs.image_betreg }}
+      resource_group: ${{ inputs.resource_group }}
+      containerAppName: ${{ inputs.container_app_betreg }} 
+    secrets:
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}     
+
+  deploy-with-github-medreg:
+    needs: [build-scan-and-push-docker-medreg]
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/deploy-with-github.yml@main
+    with:
+      registry: ${{ inputs.reg_name }}
+      app_name: ${{ inputs.image_medreg }}
+      resource_group: ${{ inputs.resource_group }}
+      containerAppName: ${{ inputs.container_app_medreg }} 
+    secrets:
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}     
+
+  deploy-with-github-meduse:
+    needs: [build-scan-and-push-docker-meduse]
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/deploy-with-github.yml@main
+    with:
+      registry: ${{ inputs.reg_name }}
+      app_name: ${{ inputs.image_meduse }}
+      resource_group: ${{ inputs.resource_group }}
+      containerAppName: ${{ inputs.container_app_meduse }} 
+    secrets:
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}     
+
+  deploy-with-github-psyreg:
+    needs: [build-scan-and-push-docker-psyreg]
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/deploy-with-github.yml@main
+    with:
+      registry: ${{ inputs.reg_name }}
+      app_name: ${{ inputs.image_psyreg }}
+      resource_group: ${{ inputs.resource_group }}
+      containerAppName: ${{ inputs.container_app_psyreg }} 
+    secrets:
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }} 
+
+  publish-changelog:
+    needs: [deploy-with-github-admin, deploy-with-github-betreg, deploy-with-github-medreg, deploy-with-github-meduse, deploy-with-github-psyreg]
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/changelog.yml@main
+    with:
+      changelog_file: ${{ inputs.changelog_file }}
+
+  changed-files:
+    needs: [deploy-with-github-admin, deploy-with-github-betreg, deploy-with-github-medreg, deploy-with-github-meduse, deploy-with-github-psyreg]
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/changed-files.yml@main
+    with:
+      files_pattern: ${{ inputs.files_pattern }}
+      ignored_files: ${{ inputs.ignored_files }}    
+
+  release:
+    needs: [deploy-with-github-admin, deploy-with-github-betreg, deploy-with-github-medreg, deploy-with-github-meduse, deploy-with-github-psyreg]
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/release.yml@main
+    with:
+      release_Features: ${{ inputs.release_Features }}
+      bugfixes: ${{ inputs.bugfixes }}
+      release_refactoring: ${{ inputs.release_refactoring }}    

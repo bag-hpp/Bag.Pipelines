@@ -1,0 +1,57 @@
+name: Dev Hpp Pipeline dotnet
+
+on:
+  push:
+    branches: [ "main" ] 
+
+permissions:
+  contents: write
+  actions: read
+  packages: write
+  id-token: write
+  security-events: write
+
+jobs:
+  run-reusable-ci-cd:
+    uses: bag-hpp/Bag.Hpp/.github/workflows/cicd-hpp-dotnet.yml@main
+    with:
+      gh_runner: 'ubuntu-latest'
+      solution_file: 'BAG-HealthProfessionRegister.sln'
+      dotnet_version: '8.0.x'
+      reg_name: 'bagcrmgmacrcorchn0'
+      app_name: ''
+      image_admin:  "edi-bag-hpp/admin/be"
+      image_betreg: "edi-bag-hpp/betreg/be"
+      image_medreg: "edi-bag-hpp/medreg/be"
+      image_meduse: "edi-bag-hpp/meduse/be"
+      image_psyreg: "edi-bag-hpp/psyreg/be"
+      changelog_file: 'CHANGELOG.md'
+      resource_group: 'bag-rg-hpp-dev-chn-0'
+      container_app_admin : "bag-ca-hpp-admin-dev-chn-0"
+      container_app_betreg: "bag-ca-hpp-betreg-dev-chn-0"
+      container_app_medreg: "bag-ca-hpp-medreg-dev-chn-0"
+      container_app_meduse: "bag-ca-hpp-meduse-dev-chn-0"
+      container_app_psyreg: "bag-ca-hpp-psyreg-dev-chn-0"  
+      publish_path_admin:  publish_admin
+      publish_path_betreg: publish_betreg
+      publish_path_medreg: publish_medreg
+      publish_path_meduse: publish_meduse
+      publish_path_psyreg: publish_psyreg
+      sonar_available: false
+      release: true
+      files_pattern: "src/main/**"
+      ignored_files: "src/test/** docs/**"
+      report_format: 'HTML'
+      working_directory: '' 
+      sonar_project_name: ''
+      release_Features: ''
+      bugfixes: ''
+      release_refactoring: '' 
+      unit_tests_available: false
+      integration_tests_available: false
+    secrets:
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
+      GH_PAT: ${{ secrets.PAT_TOKEN }}
