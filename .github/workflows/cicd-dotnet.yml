@@ -74,6 +74,16 @@ on:
         required: false
         type: string
         default: 'src'   
+      unit_tests_available:
+        description : "unit tests available"   
+        required: false
+        type: boolean    
+        default: true     
+      integration_tests_available:
+        description : "integration tests available"   
+        required: false
+        type: boolean    
+        default: true  
         
     secrets:
       AZURE_CREDENTIALS:
@@ -96,6 +106,8 @@ jobs:
       solution_file: ${{ inputs.solution_file }}
       build_location: ${{ inputs.build_location }}
       build_location_name: ${{ inputs.build_location_name }} 
+      unit_tests_available: ${{ inputs.unit_tests_available }}
+      integration_tests_available: ${{ inputs.integration_tests_available }} 
 
   #static-code-analysis-dotnet:
   #  uses: bag-hpp/Bag.Pipelines/.github/workflows/static-code-analysis-dotnet.yml@main

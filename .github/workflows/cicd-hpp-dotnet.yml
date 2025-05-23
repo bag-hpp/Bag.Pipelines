@@ -159,6 +159,8 @@ jobs:
       publish_path_medreg: ${{ inputs.publish_path_medreg }}
       publish_path_meduse: ${{ inputs.publish_path_meduse }}
       publish_path_psyreg: ${{ inputs.publish_path_psyreg }}
+      unit_tests_available: ${{ inputs.unit_tests_available }}
+      integration_tests_available: ${{ inputs.integration_tests_available }} 
 
   #static-code-analysis:
   #  uses: bag-hpp/Bag.Pipelines/.github/workflows/static-code-analysis.yml@main
