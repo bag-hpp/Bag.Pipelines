@@ -156,7 +156,7 @@ jobs:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}              
 
   release:
-    needs: [build-docker]
+    needs: [deploy-github]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/release.yml@main
     with:
       release_Features: ${{ inputs.release_Features }}
@@ -164,13 +164,13 @@ jobs:
       release_refactoring: ${{ inputs.release_refactoring }}    
 
   publish-changelog:
-    needs: [build-docker]
+    needs: [deploy-github]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/changelog.yml@main
     with:
       changelog_file: ${{ inputs.changelog_file }}
 
   changed-files:
-    needs: [build-docker]
+    needs: [deploy-github]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/changed-files.yml@main
     with:
       files_pattern: ${{ inputs.files_pattern }}
