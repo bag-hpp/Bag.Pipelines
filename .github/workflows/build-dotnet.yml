@@ -68,10 +68,18 @@ jobs:
       - name: .NET Build
         run: dotnet build ${{ inputs.solution_file }} --no-restore --configuration Release
 
-      - name: .NET Test
+      - name: .NET Unit Tests
         if: ${{ inputs.unit_tests_available }}
         run: |
-          for test_project in $(find . -name '*Tests.csproj'); do
+          for test_project in $(find . -name '*.Tests.csproj'); do
+          echo "Running tests for $test_project"
+          dotnet test "$test_project" --no-build --configuration Release --verbosity normal
+          done
+    
+      - name: .NET Integration Tests
+        if: ${{ inputs.integration_tests_available }}
+        run: |
+          for test_project in $(find . -name '*.IntegrationTests.csproj'); do
           echo "Running tests for $test_project"
           dotnet test "$test_project" --no-build --configuration Release --verbosity normal
           done
@@ -83,16 +91,16 @@ jobs:
       #
       #- name: Perform CodeQL Analysis
       #  uses: github/codeql-action/analyze@v3
-#
+      #
+
       - name: .NET Publish
-        if: ${{ inputs.integration_tests_available }}
         run: |
           for project in $(find . -name '*.csproj' -not -name '*Tests.csproj'); do
           echo "Publishing $project"
           dotnet publish "$project" --configuration Release --output ./publish
           done
 
-      - name: Upload .NET Publish Output as artifact (if runtime is dotnet)
+      - name: Upload .NET Publish Output as artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.build_location_name }}
