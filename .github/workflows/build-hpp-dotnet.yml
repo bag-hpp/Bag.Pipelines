@@ -35,7 +35,18 @@ on:
       publish_path_psyreg:   
         description: "publish_path_psyreg"
         required: true
-        type: string                    
+        type: string  
+      unit_tests_available:
+        description : "unit tests available"   
+        required: false
+        type: boolean    
+        default: true     
+      integration_tests_available:
+        description : "integration tests available"   
+        required: false
+        type: boolean    
+        default: true   
+
     outputs:
       dotnet_version:
         value: ${{ inputs.dotnet_version }}

@@ -30,7 +30,8 @@ on:
         description : "integration tests available"   
         required: false
         type: boolean    
-        default: true                 
+        default: true   
+                      
     outputs:
       gh_runner:
         value: ${{ inputs.gh_runner }}
