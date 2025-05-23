@@ -52,15 +52,9 @@ on:
       publish_path_psyreg:   
         value: ${{ inputs.publish_path_psyreg }}
       unit_tests_available:
-        description : "unit tests available"   
-        required: false
-        type: boolean    
-        default: true     
+        value: ${{ inputs.unit_tests_available }}
       integration_tests_available:
-        description : "integration tests available"   
-        required: false
-        type: boolean    
-        default: true    
+        value: ${{ inputs.integration_tests_available }}
 
 jobs:
   build:
@@ -74,6 +68,8 @@ jobs:
       publish_path_medreg: ${{ inputs.publish_path_medreg }}
       publish_path_meduse: ${{ inputs.publish_path_meduse }}
       publish_path_psyreg: ${{ inputs.publish_path_psyreg }}
+      unit_tests_available: ${{ inputs.unit_tests_available }}
+      integration_tests_available: ${{ inputs.integration_tests_available }}
 
     steps:
       - name: Checkout Code
