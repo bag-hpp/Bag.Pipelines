@@ -51,6 +51,16 @@ on:
         value: ${{ inputs.publish_path_meduse }}
       publish_path_psyreg:   
         value: ${{ inputs.publish_path_psyreg }}
+      unit_tests_available:
+        description : "unit tests available"   
+        required: false
+        type: boolean    
+        default: true     
+      integration_tests_available:
+        description : "integration tests available"   
+        required: false
+        type: boolean    
+        default: true    
 
 jobs:
   build:
