@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   run-reusable-ci-cd:
-    uses: bag-hpp/Bag.Hpp/.github/workflows/build-hpp-dotnet.yml@main
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/build-hpp-dotnet.yml@main
     with:
       gh_runner: 'ubuntu-latest'
       solution_file: 'BAG-HealthProfessionRegister.sln'

@@ -149,7 +149,7 @@ on:
 
 jobs:
   build-code:
-    uses: bag-hpp/Bag.Hpp/.github/workflows/build-hpp-dotnet.yml@main
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/build-hpp-dotnet.yml@main
     with:
       dotnet_version: ${{ inputs.dotnet_version }} 
       solution_file: ${{ inputs.solution_file }} 
@@ -161,7 +161,7 @@ jobs:
       publish_path_psyreg: ${{ inputs.publish_path_psyreg }}
 
   #static-code-analysis:
-  #  uses: bag-hpp/Bag.Hpp/.github/workflows/static-code-analysis.yml@main
+  #  uses: bag-hpp/Bag.Pipelines/.github/workflows/static-code-analysis.yml@main
   #  with:
   #    sonar_project_name: ${{ inputs.sonar_project_name }}  
   #  secrets:
@@ -184,7 +184,7 @@ jobs:
 
   build-scan-and-push-docker-admin:
     needs: [build-code, owasp-scan] #, codeql, static-code-analysis]
-    uses: bag-hpp/Bag.Hpp/.github/workflows/docker-build-and-push-with-publish-path.yml@main
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/docker-build-and-push-with-publish-path.yml@main
     with:
       registry: ${{ inputs.reg_name }}
       app_name: ${{ inputs.image_admin }}
@@ -194,7 +194,7 @@ jobs:
 
   build-scan-and-push-docker-betreg:
     needs: [build-code, owasp-scan] #, codeql, static-code-analysis]
-    uses: bag-hpp/Bag.Hpp/.github/workflows/docker-build-and-push-with-publish-path.yml@main
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/docker-build-and-push-with-publish-path.yml@main
     with:
       registry: ${{ inputs.reg_name }}
       app_name: ${{ inputs.image_betreg }}
@@ -204,7 +204,7 @@ jobs:
 
   build-scan-and-push-docker-medreg:
     needs: [build-code, owasp-scan] #, codeql, static-code-analysis]
-    uses: bag-hpp/Bag.Hpp/.github/workflows/docker-build-and-push-with-publish-path.yml@main
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/docker-build-and-push-with-publish-path.yml@main
     with:
       registry: ${{ inputs.reg_name }}
       app_name: ${{ inputs.image_medreg }}
@@ -214,7 +214,7 @@ jobs:
 
   build-scan-and-push-docker-meduse:
     needs: [build-code, owasp-scan] #, codeql, static-code-analysis]
-    uses: bag-hpp/Bag.Hpp/.github/workflows/docker-build-and-push-with-publish-path.yml@main
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/docker-build-and-push-with-publish-path.yml@main
     with:
       registry: ${{ inputs.reg_name }}
       app_name: ${{ inputs.image_meduse }}
@@ -224,7 +224,7 @@ jobs:
 
   build-scan-and-push-docker-psyreg:
     needs: [build-code, owasp-scan] #, codeql, static-code-analysis]
-    uses: bag-hpp/Bag.Hpp/.github/workflows/docker-build-and-push-with-publish-path.yml@main
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/docker-build-and-push-with-publish-path.yml@main
     with:
       registry: ${{ inputs.reg_name }}
       app_name: ${{ inputs.image_psyreg }}
