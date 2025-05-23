@@ -121,7 +121,7 @@ jobs:
   #    build_location_name: ${{ inputs.build_location_name }}
 
   build-docker:
-    needs: [build] #[build, owasp-scan, static-code-analysis-dotnet]
+    needs: [build, owasp-scan] #codeql, static-code-analysis-dotnet]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/docker-build-and-push.yml@main
     with:
       registry: ${{ inputs.reg_name }}
