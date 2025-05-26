@@ -62,15 +62,12 @@ jobs:
            echo "SONAR_PROJECT_KEY is set ✅"
          fi
 
-     - uses: SonarSource/sonarqube-scan-action@v5
-       with:
-         projectBaseDir: .
-         args: >
-           -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-       env:
-         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-         SONAR_SOURCES: src
-         SONAR_TESTS: src
-         SONAR_EXCLUSIONS: "**/node_modules/**,**/*.spec.ts,*/*.test."
-         SONAR_JAVASCRIPT_LCOV_REPORTPATHS: "coverage/Bag.CR.Ncds.UI/lcov.info" # Adjust <project-name> if needed
+     - name: Run SonarQube Scanner CLI
+       run: |
+         npx sonarqube-scanner \\
+           -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} \\
+           -Dsonar.sources=src \\
+           -Dsonar.tests=src \\
+           -Dsonar.exclusions="**/node_modules/**,**/*.spec.ts" \\
+           -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \\
+           -Dsonar.login=${{ secrets.SONAR_TOKEN }}
