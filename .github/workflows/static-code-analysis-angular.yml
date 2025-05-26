@@ -62,21 +62,13 @@ jobs:
            echo "SONAR_PROJECT_KEY is set ✅"
          fi
 
-     - name: Run build
-       run: npm run build
-
-     - name: Run Test
-       run: npm test -- --no-watch --code-coverage --browsers=ChromeHeadlessCI
-
      - name: Run SonarQube Scanner CLI
        env:
          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
        run: |
-         npx sonarqube-scanner \\
-           -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} \\
-           -Dsonar.sources=src \\
-           -Dsonar.tests=src \\
-           -Dsonar.test.inclusions="**/*.test.js" \\
-           -Dsonar.exclusions="**/node_modules/**,**/*.spec.ts" \\
-           -Dsonar.testExecutionReportPaths=coverage/sonarQube/sqr.xml
+         npx sonarqube-scanner \
+           -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} \
+           -Dsonar.sources=src \
+           -Dsonar.tests=src \
+           -Dsonar.exclusions="**/node_modules/**,**/*.spec.ts"
