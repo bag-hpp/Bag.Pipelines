@@ -94,6 +94,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
-          dotnet sonarscanner begin /k:${{ secrets.SONAR_PROJECT_KEY }} /d:sonar.host.url=${{ secrets.SONAR_PROJECT_KEY }} /d:sonar.token=${{ secrets.SONAR_TOKEN }}
+          dotnet sonarscanner begin /k:${{ secrets.SONAR_PROJECT_KEY }} /d:sonar.host.url=${{ secrets.SONAR_HOST_URL }} /d:sonar.token=${{ secrets.SONAR_TOKEN }}
           dotnet build
           dotnet sonarscanner end /d:sonar.token=${{ secrets.SONAR_TOKEN }}
