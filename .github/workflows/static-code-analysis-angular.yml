@@ -72,4 +72,5 @@ jobs:
          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
          SONAR_SOURCES: src
          SONAR_TESTS: src
-         SONAR_EXCLUSIONS: "**/node_modules/**,**/*.spec.ts"
+         SONAR_EXCLUSIONS: "**/node_modules/**,**/*.spec.ts,*/*.test."
+         SONAR_JAVASCRIPT_LCOV_REPORTPATHS: "coverage/Bag.CR.Ncds.UI/lcov.info" # Adjust <project-name> if needed
