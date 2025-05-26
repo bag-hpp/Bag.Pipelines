@@ -6,7 +6,6 @@ on:
       gh_runner:
         required: true
         type: string
-        default: 'ubuntu-latest'
       java_version:
         description: 'Java version to use'
         required: false
@@ -29,7 +28,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.gh_runner }}
     outputs:
       java_version: ${{ inputs.java_version }}
       distribution: ${{ inputs.distribution }}

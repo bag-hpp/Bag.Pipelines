@@ -6,7 +6,6 @@ on:
       gh_runner:
         required: true
         type: string
-        default: 'ubuntu-latest'
       runtime:
         required: true
         type: string
@@ -86,6 +85,7 @@ jobs:
   build:
     uses: bag-hpp/Bag.Pipelines/.github/workflows/build-angular.yml@main
     with:
+      gh_runner: ${{ inputs.gh_runner }}
       node_version:  ${{ inputs.node_version }}
       build_location:  ${{ inputs.build_location }}   
       build_location_name:  ${{ inputs.build_location_name }}  
@@ -100,6 +100,7 @@ jobs:
   owasp-scan:
     uses: bag-hpp/Bag.Pipelines/.github/workflows/owasp.yml@main    
     with:
+      gh_runner: ${{ inputs.gh_runner }}
       project_path: ${{ inputs.owasp_scan_path }}
       report_format: ${{ inputs.report_format }}     
   
@@ -115,6 +116,7 @@ jobs:
     needs: [build, owasp-scan] #codeql, static-code-analysis-dotnet]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/docker-build-and-push.yml@main
     with:
+      gh_runner: ${{ inputs.gh_runner }}
       registry: ${{ inputs.reg_name }}
       app_name: ${{ inputs.app_name }}
       runtime: ${{ inputs.runtime }}
@@ -127,6 +129,7 @@ jobs:
     needs: [build-docker]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/deploy-with-github.yml@main
     with:
+      gh_runner: ${{ inputs.gh_runner }}
       registry: ${{ inputs.reg_name }}
       app_name: ${{ inputs.app_name }}
       resource_group: ${{ inputs.resource_group }}
@@ -138,6 +141,7 @@ jobs:
     needs: [deploy-github]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/release.yml@main
     with:
+      gh_runner: ${{ inputs.gh_runner }}
       release_Features: ${{ inputs.release_Features }}
       bugfixes: ${{ inputs.bugfixes }}
       release_refactoring: ${{ inputs.release_refactoring }}   
@@ -146,11 +150,13 @@ jobs:
     needs: [deploy-github]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/changelog.yml@main
     with:
+      gh_runner: ${{ inputs.gh_runner }}
       changelog_file: ${{ inputs.changelog_file }}
 
   changed-files:
     needs: [deploy-github]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/changed-files.yml@main
     with:
+      gh_runner: ${{ inputs.gh_runner }}
       files_pattern: ${{ inputs.files_pattern }}
       ignored_files: ${{ inputs.ignored_files }}     

@@ -45,7 +45,6 @@ on:
       gh_runner:
         required: true
         type: string
-        default: 'ubuntu-latest' 
       working_directory:
         required: true
         type: string    
@@ -151,6 +150,7 @@ jobs:
   build-code:
     uses: bag-hpp/Bag.Pipelines/.github/workflows/build-hpp-dotnet.yml@main
     with:
+      gh_runner: ${{ inputs.gh_runner }}
       dotnet_version: ${{ inputs.dotnet_version }} 
       solution_file: ${{ inputs.solution_file }} 
       gh_runner: ${{ inputs.gh_runner }}
@@ -174,6 +174,7 @@ jobs:
   owasp-scan:
     uses: bag-hpp/Bag.Pipelines/.github/workflows/owasp.yml@main    
     with:
+      gh_runner: ${{ inputs.gh_runner }}
       project_path: "src"
       report_format: ${{ inputs.report_format }}
 
@@ -188,6 +189,7 @@ jobs:
     needs: [build-code, owasp-scan] #, codeql, static-code-analysis]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/docker-build-and-push-with-publish-path.yml@main
     with:
+      gh_runner: ${{ inputs.gh_runner }}
       registry: ${{ inputs.reg_name }}
       app_name: ${{ inputs.image_admin }}
       publish_path: ${{ inputs.publish_path_admin }}
@@ -198,6 +200,7 @@ jobs:
     needs: [build-code, owasp-scan] #, codeql, static-code-analysis]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/docker-build-and-push-with-publish-path.yml@main
     with:
+      gh_runner: ${{ inputs.gh_runner }}
       registry: ${{ inputs.reg_name }}
       app_name: ${{ inputs.image_betreg }}
       publish_path: ${{ inputs.publish_path_betreg }}
@@ -208,6 +211,7 @@ jobs:
     needs: [build-code, owasp-scan] #, codeql, static-code-analysis]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/docker-build-and-push-with-publish-path.yml@main
     with:
+      gh_runner: ${{ inputs.gh_runner }}
       registry: ${{ inputs.reg_name }}
       app_name: ${{ inputs.image_medreg }}
       publish_path: ${{ inputs.publish_path_medreg }}
@@ -218,6 +222,7 @@ jobs:
     needs: [build-code, owasp-scan] #, codeql, static-code-analysis]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/docker-build-and-push-with-publish-path.yml@main
     with:
+      gh_runner: ${{ inputs.gh_runner }}
       registry: ${{ inputs.reg_name }}
       app_name: ${{ inputs.image_meduse }}
       publish_path: ${{ inputs.publish_path_meduse }}
@@ -228,6 +233,7 @@ jobs:
     needs: [build-code, owasp-scan] #, codeql, static-code-analysis]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/docker-build-and-push-with-publish-path.yml@main
     with:
+      gh_runner: ${{ inputs.gh_runner }}
       registry: ${{ inputs.reg_name }}
       app_name: ${{ inputs.image_psyreg }}
       publish_path: ${{ inputs.publish_path_psyreg }}
@@ -238,6 +244,7 @@ jobs:
     needs: [build-scan-and-push-docker-admin]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/deploy-with-github.yml@main
     with:
+      gh_runner: ${{ inputs.gh_runner }}
       registry: ${{ inputs.reg_name }}
       app_name: ${{ inputs.image_admin }}
       resource_group: ${{ inputs.resource_group }}
@@ -249,6 +256,7 @@ jobs:
     needs: [build-scan-and-push-docker-betreg]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/deploy-with-github.yml@main
     with:
+      gh_runner: ${{ inputs.gh_runner }}
       registry: ${{ inputs.reg_name }}
       app_name: ${{ inputs.image_betreg }}
       resource_group: ${{ inputs.resource_group }}
@@ -260,6 +268,7 @@ jobs:
     needs: [build-scan-and-push-docker-medreg]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/deploy-with-github.yml@main
     with:
+      gh_runner: ${{ inputs.gh_runner }}
       registry: ${{ inputs.reg_name }}
       app_name: ${{ inputs.image_medreg }}
       resource_group: ${{ inputs.resource_group }}
@@ -271,6 +280,7 @@ jobs:
     needs: [build-scan-and-push-docker-meduse]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/deploy-with-github.yml@main
     with:
+      gh_runner: ${{ inputs.gh_runner }}
       registry: ${{ inputs.reg_name }}
       app_name: ${{ inputs.image_meduse }}
       resource_group: ${{ inputs.resource_group }}
@@ -282,6 +292,7 @@ jobs:
     needs: [build-scan-and-push-docker-psyreg]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/deploy-with-github.yml@main
     with:
+      gh_runner: ${{ inputs.gh_runner }}
       registry: ${{ inputs.reg_name }}
       app_name: ${{ inputs.image_psyreg }}
       resource_group: ${{ inputs.resource_group }}
@@ -293,12 +304,14 @@ jobs:
     needs: [deploy-with-github-admin, deploy-with-github-betreg, deploy-with-github-medreg, deploy-with-github-meduse, deploy-with-github-psyreg]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/changelog.yml@main
     with:
+      gh_runner: ${{ inputs.gh_runner }}
       changelog_file: ${{ inputs.changelog_file }}
 
   changed-files:
     needs: [deploy-with-github-admin, deploy-with-github-betreg, deploy-with-github-medreg, deploy-with-github-meduse, deploy-with-github-psyreg]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/changed-files.yml@main
     with:
+      gh_runner: ${{ inputs.gh_runner }}
       files_pattern: ${{ inputs.files_pattern }}
       ignored_files: ${{ inputs.ignored_files }}    
 
@@ -306,6 +319,7 @@ jobs:
     needs: [deploy-with-github-admin, deploy-with-github-betreg, deploy-with-github-medreg, deploy-with-github-meduse, deploy-with-github-psyreg]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/release.yml@main
     with:
+      gh_runner: ${{ inputs.gh_runner }}
       release_Features: ${{ inputs.release_Features }}
       bugfixes: ${{ inputs.bugfixes }}
       release_refactoring: ${{ inputs.release_refactoring }}    

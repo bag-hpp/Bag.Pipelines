@@ -4,9 +4,8 @@ on:
   workflow_call:
     inputs:
       gh_runner:
-        required: false
+        required: true
         type: string
-        default: "ubuntu-latest"
       registry:
         required: true
         type: string
@@ -56,7 +55,6 @@ jobs:
         with:
           name: ${{ inputs.build_location_name }}
           path: ${{ inputs.build_location }}
-
 
       - name: ls lisa . 
         if: ${{ inputs.runtime == 'angular' }}

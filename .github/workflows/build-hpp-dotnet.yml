@@ -12,9 +12,8 @@ on:
         required: true
         type: string         
       gh_runner:
-        description: "Github runner (private/public)"
-        required: false
-        default:  "ubuntu-latest"
+        description: "Github runner"
+        required: true
         type: string      
       publish_path_admin:  
         description: "publish_path_admin"
@@ -69,7 +68,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.gh_runner }}
     outputs:
       dotnet_version: ${{ inputs.dotnet_version }}
       solution_file: ${{ inputs.solution_file }}

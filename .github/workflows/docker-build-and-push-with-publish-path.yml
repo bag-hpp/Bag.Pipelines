@@ -13,9 +13,8 @@ on:
         required: true
         type: string
       gh_runner:
-        required: false
+        required: true
         type:     string
-        default:  "ubuntu-latest"
     secrets:
       AZURE_CREDENTIALS:
         required: true

@@ -6,7 +6,6 @@ on:
       gh_runner:
         required: true
         type: string
-        default: 'ubuntu-latest'
       dotnet_version:
         description: ".NET SDK version (if runtime is dotnet)"
         required: true
@@ -42,7 +41,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.gh_runner }}
     outputs:
       dotnet_version: ${{ inputs.dotnet_version }}
       solution_file: ${{ inputs.solution_file }}

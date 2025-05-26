@@ -8,9 +8,8 @@ on:
         required: true
         type: string 
       gh_runner:
-        required: false
+        required: true
         type:     string
-        default:  "ubuntu-latest" 
       sonar_project_name:  
         required: true
         type: string           

@@ -14,9 +14,8 @@ on:
         type: string
         default: "temurin"   
       gh_runner:
-        required: false
+        required: true
         type:     string
-        default:  "ubuntu-latest"       
 
 jobs:
   analyze:

@@ -4,9 +4,8 @@ on:
   workflow_call:
     inputs:
       gh_runner:
-        required: false
-        type:     string
-        default:  "ubuntu-latest" 
+        required: true
+        type: string
       registry:
         required: true
         type: string

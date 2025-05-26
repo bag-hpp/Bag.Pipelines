@@ -4,9 +4,8 @@ on:
   workflow_call:
     inputs:
       gh_runner:
-        required: false
+        required: true
         type: string
-        default: "ubuntu-latest"   
       changelog_file:
         description: "Path to Changelog File"
         required: true
