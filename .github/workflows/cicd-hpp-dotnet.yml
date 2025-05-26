@@ -162,14 +162,14 @@ jobs:
       unit_tests_available: ${{ inputs.unit_tests_available }}
       integration_tests_available: ${{ inputs.integration_tests_available }} 
 
-  #static-code-analysis:
-  #  uses: bag-hpp/Bag.Pipelines/.github/workflows/static-code-analysis.yml@main
-  #  with:
-  #    sonar_project_name: ${{ inputs.sonar_project_name }}  
-  #  secrets:
-  #    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
-  #    SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} 
-  #    SONAR_PROJECT_KEY:  ${{ secrets.SONAR_PROJECT_KEY }} 
+  static-code-analysis:
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/static-code-analysis-dotnet.yml@main
+    with:
+      sonar_project_name: ${{ inputs.sonar_project_name }}  
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
+      SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} 
+      SONAR_PROJECT_KEY:  ${{ secrets.SONAR_PROJECT_KEY }} 
 
   owasp-scan:
     uses: bag-hpp/Bag.Pipelines/.github/workflows/owasp.yml@main    
@@ -186,7 +186,7 @@ jobs:
   #    dotnet_version: ${{ inputs.dotnet_version }} 
 
   build-scan-and-push-docker-admin:
-    needs: [build-code, owasp-scan] #, codeql, static-code-analysis]
+    needs: [build-code, owasp-scan, static-code-analysis] #, codeql]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/docker-build-and-push-with-publish-path.yml@main
     with:
       gh_runner: ${{ inputs.gh_runner }}
