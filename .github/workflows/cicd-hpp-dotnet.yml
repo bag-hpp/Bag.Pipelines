@@ -153,7 +153,6 @@ jobs:
       gh_runner: ${{ inputs.gh_runner }}
       dotnet_version: ${{ inputs.dotnet_version }} 
       solution_file: ${{ inputs.solution_file }} 
-      gh_runner: ${{ inputs.gh_runner }}
       publish_path_admin:  ${{ inputs.publish_path_admin }}
       publish_path_betreg: ${{ inputs.publish_path_betreg }}
       publish_path_medreg: ${{ inputs.publish_path_medreg }}
