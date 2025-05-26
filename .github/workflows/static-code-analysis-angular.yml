@@ -53,13 +53,13 @@ jobs:
            echo "SONAR_TOKEN is set ✅"
          fi
   
-     - name: Check if SONAR_HOST_URL is defined
+     - name: Check if SONAR_PROJECT_KEY is defined
        run: |
-         if [ -z "${{ secrets.SONAR_HOST_URL }}" ]; then
-           echo "SONAR_HOST_URL is not set!"
+         if [ -z "${{ secrets.SONAR_PROJECT_KEY }}" ]; then
+           echo "SONAR_PROJECT_KEY is not set!"
            exit 1
          else
-           echo "SONAR_HOST_URL is set ✅"
+           echo "SONAR_PROJECT_KEY is set ✅"
          fi
 
      - uses: SonarSource/sonarqube-scan-action@v5
