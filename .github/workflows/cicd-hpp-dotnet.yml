@@ -164,6 +164,8 @@ jobs:
   static-code-analysis:
     uses: bag-hpp/Bag.Pipelines/.github/workflows/static-code-analysis-dotnet.yml@main
     with:
+      gh_runner: ${{ inputs.gh_runner }}
+      dotnet_version: ${{ inputs.dotnet_version }} 
       sonar_project_name: ${{ inputs.sonar_project_name }}  
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
