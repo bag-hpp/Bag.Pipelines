@@ -5,7 +5,11 @@ on:
     inputs:
       gh_runner:
         required: true
-        type:     string   
+        type: string  
+      node_version:
+        required: true
+        type: string    
+        
     secrets:
       SONAR_TOKEN:
         required: true
@@ -21,9 +25,23 @@ jobs:
     steps:
      - uses: actions/checkout@v4
        with:
-         fetch-depth: 0 
+         fetch-depth: 0
+
+     - name: Set up Node.js
+       uses: actions/setup-node@v4
+       with:
+         node-version: ${{ inputs.node_version }}
+
+     - name: Install dependencies
+       run: npm install 
+
      - uses: SonarSource/sonarqube-scan-action@v5
+       with:
+         projectBaseDir: . 
        env:
          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
+         SONAR_SOURCES: src
+         SONAR_TESTS: src
+         SONAR_EXCLUSIONS: "**/node_modules/**,**/*.spec.ts"
