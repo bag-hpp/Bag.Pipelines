@@ -90,12 +90,12 @@ jobs:
       build_location:  ${{ inputs.build_location }}   
       build_location_name:  ${{ inputs.build_location_name }}  
 
-  #static-code-analysis-angular:
-  #  uses: bag-hpp/Bag.Pipelines/.github/workflows/static-code-analysis-angular.yml@main
-  #  secrets:      
-  #    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
-  #    SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} 
-  #    SONAR_PROJECT_KEY:  ${{ secrets.SONAR_PROJECT_KEY }}
+  static-code-analysis-angular:
+    uses: bag-hpp/Bag.Pipelines/.github/workflows/static-code-analysis-angular.yml@main
+    secrets:      
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
+      SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} 
+      SONAR_PROJECT_KEY:  ${{ secrets.SONAR_PROJECT_KEY }}
 
   owasp-scan:
     uses: bag-hpp/Bag.Pipelines/.github/workflows/owasp.yml@main    
@@ -113,7 +113,7 @@ jobs:
   #    build_location_name: ${{ inputs.build_location_name }}
 
   build-docker:
-    needs: [build, owasp-scan] #codeql, static-code-analysis-dotnet]
+    needs: [build, owasp-scan, static-code-analysis-angular] #codeql]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/docker-build-and-push.yml@main
     with:
       gh_runner: ${{ inputs.gh_runner }}

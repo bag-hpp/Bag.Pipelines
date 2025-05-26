@@ -18,7 +18,7 @@ jobs:
     uses: bag-hpp/Bag.Pipelines/.github/workflows/build-angular.yml@main
     with:
       runtime: 'angular'
-      gh_runner: 'ubuntu-latest'
+      gh_runner: 'Linux'
       node_version: '20.18.0'
       build_location: 'dist/browser'  
       build_location_name: 'frontend-build'

@@ -15,7 +15,7 @@ jobs:
   pipeline-feature-java:
     uses: bag-hpp/Bag.Pipelines/.github/workflows/cicd-java.yml@main
     with:
-      gh_runner: 'ubuntu-latest'
+      gh_runner: 'Linux'
       runtime: 'java'
       distribution: 'temurin'
       reg_name: '' #bagcrmgmacrcorchn0

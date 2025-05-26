@@ -15,7 +15,7 @@ jobs:
   run-reusable-ci-cd:
     uses: bag-hpp/Bag.Pipelines/.github/workflows/cicd-hpp-dotnet.yml@main
     with:
-      gh_runner: 'ubuntu-latest'
+      gh_runner: 'Linux'
       solution_file: 'BAG-HealthProfessionRegister.sln'
       dotnet_version: '8.0.x'
       reg_name: 'bagcrmgmacrcorchn0'

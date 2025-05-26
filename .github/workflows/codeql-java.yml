@@ -20,7 +20,8 @@ on:
 jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
-    runs-on: ${{ inputs.gh_runner }}
+    runs-on:
+      group: ${{ inputs.gh_runner }}
 
     permissions:
       security-events: write

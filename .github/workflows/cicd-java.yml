@@ -91,7 +91,6 @@ jobs:
       gh_runner: ${{ inputs.gh_runner }}
 
   static-code-analysis:
-    needs: [build]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/static-code-analysis.yml@main
     with:
       gh_runner: ${{ inputs.gh_runner }}
@@ -105,7 +104,6 @@ jobs:
       SONAR_PROJECT_KEY:  ${{ secrets.SONAR_PROJECT_KEY }} 
 
   owasp-scan:
-    needs: [build]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/owasp.yml@main    
     with:
       gh_runner: ${{ inputs.gh_runner }}
@@ -113,7 +111,6 @@ jobs:
       report_format: ${{ inputs.report_format }} 
 
   codeql:
-    needs: [build]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/codeql-java.yml@main    
     with:
       gh_runner: ${{ inputs.gh_runner }}
@@ -122,7 +119,7 @@ jobs:
       build_location_name: ${{ inputs.build_location_name }}
 
   build-docker:
-    needs: [codeql, owasp-scan, static-code-analysis]
+    needs: [build, codeql, owasp-scan, static-code-analysis]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/docker-build-and-push.yml@main
     with:
       gh_runner: ${{ inputs.gh_runner }}
@@ -145,7 +142,7 @@ jobs:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}                      
 
   release:
-    needs: [build-docker]
+    needs: [deploy-github]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/release.yml@main
     with:
       gh_runner: ${{ inputs.gh_runner }}
@@ -154,14 +151,14 @@ jobs:
       release_refactoring: ${{ inputs.release_refactoring }}   
 
   publish-changelog:
-    needs: [build-docker]
+    needs: [deploy-github]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/changelog.yml@main
     with:
       gh_runner: ${{ inputs.gh_runner }}
       changelog_file: ${{ inputs.changelog_file }}
 
   changed-files:
-    needs: [build-docker]
+    needs: [deploy-github]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/changed-files.yml@main
     with:
       gh_runner: ${{ inputs.gh_runner }}

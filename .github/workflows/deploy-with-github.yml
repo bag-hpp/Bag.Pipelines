@@ -24,7 +24,8 @@ on:
 
 jobs:
   github-deploy:
-    runs-on: ${{ inputs.gh_runner }}
+    runs-on:
+      group: ${{ inputs.gh_runner }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2 

@@ -17,7 +17,8 @@ on:
         
 jobs:
   owasp-scan:
-    runs-on: ${{ inputs.gh_runner }}
+    runs-on:
+      group: ${{ inputs.gh_runner }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4

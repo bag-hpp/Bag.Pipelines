@@ -19,7 +19,8 @@ on:
 jobs:
   angular:
     name: Angular Build
-    runs-on: ${{ inputs.gh_runner }}
+    runs-on:
+      group: ${{ inputs.gh_runner }}
     steps:
       - name: Checkout the source code
         uses: actions/checkout@v3

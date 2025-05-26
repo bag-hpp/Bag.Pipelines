@@ -41,7 +41,8 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ inputs.gh_runner }}
+    runs-on:
+      group: ${{ inputs.gh_runner }}
     outputs:
       dotnet_version: ${{ inputs.dotnet_version }}
       solution_file: ${{ inputs.solution_file }}
