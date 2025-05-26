@@ -62,6 +62,9 @@ jobs:
            echo "SONAR_PROJECT_KEY is set ✅"
          fi
 
+     - name: Build and Run Tests
+       run: npm test -- --code-coverage
+
      - name: Run SonarQube Scanner CLI
        env:
          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
