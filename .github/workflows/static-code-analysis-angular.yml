@@ -63,11 +63,12 @@ jobs:
          fi
 
      - name: Run SonarQube Scanner CLI
+       env:
+         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
        run: |
          npx sonarqube-scanner \\
            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} \\
            -Dsonar.sources=src \\
            -Dsonar.tests=src \\
-           -Dsonar.exclusions="**/node_modules/**,**/*.spec.ts" \\
-           -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \\
-           -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+           -Dsonar.exclusions="**/node_modules/**,**/*.spec.ts"
