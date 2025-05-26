@@ -83,4 +83,4 @@ jobs:
             /d:sonar.token=${{ secrets.SONAR_TOKEN }} \
             /d:sonar.branch.name=${{ github.ref_name }}
           dotnet build
-          dotnet sonarscanner end
+          dotnet sonarscanner end /d:sonar.token=${{ secrets.SONAR_TOKEN }}
