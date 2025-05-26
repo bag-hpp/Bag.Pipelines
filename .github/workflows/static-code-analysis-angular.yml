@@ -71,4 +71,5 @@ jobs:
            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} \\
            -Dsonar.sources=src \\
            -Dsonar.tests=src \\
+           -Dsonar.test.inclusions="**/*.test.js" \\
            -Dsonar.exclusions="**/node_modules/**,**/*.spec.ts"
