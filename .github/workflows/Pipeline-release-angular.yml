@@ -15,7 +15,7 @@ jobs:
   pipeline-feature-angular:
     uses: bag-hpp/Bag.Pipelines/.github/workflows/cicd-angular.yml@main
     with:
-      gh_runner: 'Linux'
+      gh_runner: Linux
       runtime: 'angular'
       reg_name: '' #bagcrmgmacrcorchn0
       app_name: '' #edi-bag-cr/ncds/fe

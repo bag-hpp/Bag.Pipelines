@@ -17,7 +17,7 @@ jobs:
   pipeline-feature-java:
     uses: bag-hpp/Bag.Pipelines/.github/workflows/buld/buld-java.yml@main
     with:
-      gh_runner: 'Linux'
+      gh_runner: Linux
       runtime: 'java'
       distribution: 'temurin'
       build_location: './target/*.jar' 
