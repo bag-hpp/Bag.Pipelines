@@ -60,6 +60,24 @@ jobs:
         
       - name: Check if SONAR_HOST_URL is defined
         run: |
+          if [ -z "${{ secrets.SONAR_PROJECT_KEY }}" ]; then
+            echo "SONAR_PROJECT_KEY is not set!"
+            exit 1
+          else
+            echo "SONAR_PROJECT_KEY is set ✅"
+          fi
+  
+      - name: Check if SONAR_TOKEN is defined
+        run: |
+          if [ -z "${{ secrets.SONAR_TOKEN }}" ]; then
+            echo "SONAR_TOKEN is not set!"
+            exit 1
+          else
+            echo "SONAR_TOKEN is set ✅"
+          fi
+  
+      - name: Check if SONAR_HOST_URL is defined
+        run: |
           if [ -z "${{ secrets.SONAR_HOST_URL }}" ]; then
             echo "SONAR_HOST_URL is not set!"
             exit 1
@@ -76,11 +94,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
-          dotnet sonarscanner begin /k:${{ secrets.SONAR_PROJECT_KEY }} \
-            /n:sonar.projectName="${{ inputs.sonar_project_name }}" \
-            /v:"1.0" \
-            /d:sonar.host.url=${{ secrets.SONAR_HOST_URL }} \
-            /d:sonar.token=${{ secrets.SONAR_TOKEN }} \
-            /d:sonar.branch.name=${{ github.ref_name }}
+          dotnet sonarscanner begin /k:${{ secrets.SONAR_PROJECT_KEY }} /d:sonar.host.url=${{ secrets.SONAR_HOST_URL }} /d:sonar.token=${{ secrets.SONAR_TOKEN }}
           dotnet build
           dotnet sonarscanner end /d:sonar.token=${{ secrets.SONAR_TOKEN }}

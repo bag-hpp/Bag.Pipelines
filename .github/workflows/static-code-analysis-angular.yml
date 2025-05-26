@@ -5,7 +5,11 @@ on:
     inputs:
       gh_runner:
         required: true
-        type:     string   
+        type: string  
+      node_version:
+        required: true
+        type: string    
+        
     secrets:
       SONAR_TOKEN:
         required: true
@@ -21,8 +25,50 @@ jobs:
     steps:
      - uses: actions/checkout@v4
        with:
-         fetch-depth: 0 
-     - uses: SonarSource/sonarqube-scan-action@v5
+         fetch-depth: 0
+
+     - name: Set up Node.js
+       uses: actions/setup-node@v4
+       with:
+         node-version: ${{ inputs.node_version }}
+
+     - name: Install dependencies
+       run: npm install 
+        
+     - name: Check if SONAR_HOST_URL is defined
+       run: |
+         if [ -z "${{ secrets.SONAR_HOST_URL }}" ]; then
+           echo "SONAR_HOST_URL is not set!"
+           exit 1
+         else
+           echo "SONAR_HOST_URL is set ✅"
+         fi
+  
+     - name: Check if SONAR_TOKEN is defined
+       run: |
+         if [ -z "${{ secrets.SONAR_TOKEN }}" ]; then
+           echo "SONAR_TOKEN is not set!"
+           exit 1
+         else
+           echo "SONAR_TOKEN is set ✅"
+         fi
+  
+     - name: Check if SONAR_PROJECT_KEY is defined
+       run: |
+         if [ -z "${{ secrets.SONAR_PROJECT_KEY }}" ]; then
+           echo "SONAR_PROJECT_KEY is not set!"
+           exit 1
+         else
+           echo "SONAR_PROJECT_KEY is set ✅"
+         fi
+
+     - name: Run SonarQube Scanner CLI
        env:
          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+       run: |
+         npx sonarqube-scanner \
+           -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} \
+           -Dsonar.sources=src \
+           -Dsonar.tests=src \
+           -Dsonar.exclusions="**/node_modules/**,**/*.spec.ts"

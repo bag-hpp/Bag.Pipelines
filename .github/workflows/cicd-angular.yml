@@ -94,6 +94,7 @@ jobs:
     uses: bag-hpp/Bag.Pipelines/.github/workflows/static-code-analysis-angular.yml@main
     with:
       gh_runner: ${{ inputs.gh_runner }}
+      node_version: ${{ inputs.node_version }}  
     secrets:      
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
       SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} 
