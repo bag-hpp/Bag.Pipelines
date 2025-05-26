@@ -64,11 +64,12 @@ jobs:
 
      - uses: SonarSource/sonarqube-scan-action@v5
        with:
-         projectBaseDir: . 
+         projectBaseDir: .
+         args: >
+           -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
        env:
          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-         SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
          SONAR_SOURCES: src
          SONAR_TESTS: src
          SONAR_EXCLUSIONS: "**/node_modules/**,**/*.spec.ts"
