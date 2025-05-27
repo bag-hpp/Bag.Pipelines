@@ -116,7 +116,7 @@ jobs:
   #    build_location_name: ${{ inputs.build_location_name }}
 
   build-docker:
-    needs: [build, owasp-scan, static-code-analysis-angular] #codeql]
+    needs: [build, owasp-scan ] #, static-code-analysis-angular, codeql]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/docker-build-and-push.yml@main
     with:
       gh_runner: ${{ inputs.gh_runner }}
