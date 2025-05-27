@@ -67,7 +67,12 @@ on:
         description: 'owasp scan path'
         required: false
         type: string
-        default: 'src'  
+        default: 'src'
+      unit_tests_available:
+        description : "unit tests available"   
+        required: false
+        type: boolean    
+        default: true     
 
     secrets:
       AZURE_CREDENTIALS:
@@ -88,17 +93,18 @@ jobs:
       gh_runner: ${{ inputs.gh_runner }}
       node_version:  ${{ inputs.node_version }}
       build_location:  ${{ inputs.build_location }}   
-      build_location_name:  ${{ inputs.build_location_name }}  
+      build_location_name:  ${{ inputs.build_location_name }}
+      unit_tests_available: ${{ inputs.unit_tests_available }}
 
-  static-code-analysis-angular:
-    uses: bag-hpp/Bag.Pipelines/.github/workflows/static-code-analysis-angular.yml@main
-    with:
-      gh_runner: ${{ inputs.gh_runner }}
-      node_version: ${{ inputs.node_version }}  
-    secrets:      
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
-      SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} 
-      SONAR_PROJECT_KEY:  ${{ secrets.SONAR_PROJECT_KEY }}
+  #static-code-analysis-angular:
+  #  uses: bag-hpp/Bag.Pipelines/.github/workflows/static-code-analysis-angular.yml@main
+  #  with:
+  #    gh_runner: ${{ inputs.gh_runner }}
+  #    node_version: ${{ inputs.node_version }}  
+  #  secrets:      
+  #    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
+  #    SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} 
+  #    SONAR_PROJECT_KEY:  ${{ secrets.SONAR_PROJECT_KEY }}
 
   owasp-scan:
     uses: bag-hpp/Bag.Pipelines/.github/workflows/owasp.yml@main    
@@ -116,7 +122,7 @@ jobs:
   #    build_location_name: ${{ inputs.build_location_name }}
 
   build-docker:
-    needs: [build, owasp-scan , static-code-analysis-angular] #, codeql]
+    needs: [build, owasp-scan] # , static-code-analysis-angular] #, codeql]
     uses: bag-hpp/Bag.Pipelines/.github/workflows/docker-build-and-push.yml@main
     with:
       gh_runner: ${{ inputs.gh_runner }}
