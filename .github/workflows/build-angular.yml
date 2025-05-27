@@ -17,8 +17,9 @@ on:
         type: string
       unit_tests_available:
         description : "unit tests available"   
-        required: true
+        required: false
         type: boolean    
+        default: true    
 
 jobs:
   angular:
